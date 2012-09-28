@@ -1,0 +1,43 @@
+package hci;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class CloseApp_query {
+	static JFrame frame;
+	public static void closeapp_query(){
+		frame = new JFrame();
+		JLabel askuser = new JLabel("Do you really wish to quit?");
+		JButton yes = new JButton ("Yes");
+		JButton no = new JButton ("no");
+		yes.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+		    	frame.dispose();
+		    	System.exit(0);
+		}
+			
+			
+		});
+		
+		no.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+		    	
+		}
+			
+			
+		});
+		
+		frame.getContentPane().add(BorderLayout.NORTH,askuser);
+		frame.getContentPane().add(BorderLayout.WEST,yes);
+		frame.getContentPane().add(BorderLayout.EAST,no);
+		frame.pack(); 
+		frame.setVisible(true);
+		
+	}
+}

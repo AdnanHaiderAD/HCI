@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652115910
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652119212
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652126142
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652128133
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652137080
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652140045
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652150856
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652153196
+started,bundle,org.eclipse.pde,3.4.100.v200909170800,"org.eclipse.pde",1348652160607
+error,log,,,"VariableBlock: Classpath variable with null value: JRE_SRC",1348652161150
+error,log,,,"VariableBlock: Classpath variable with null value: JRE_SRCROOT",1348652161687
+error,log,,,"VariableBlock: Classpath variable with null value: JRE_LIB",1348652162165
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652184636
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652186086
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652214704
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652234131
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652271712
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652277988
+error,log,,,"VariableBlock: Classpath variable with null value: JUNIT_SRC_HOME",1348652304087
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652377205
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652389572
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652400166
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652407840
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652420005
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348652446925
