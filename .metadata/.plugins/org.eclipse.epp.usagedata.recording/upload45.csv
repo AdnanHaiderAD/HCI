@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+java.vm.vendor,sysinfo,,,"Apple Inc.",1348859055619
+java.vm.version,sysinfo,,,"17.1-b03-307",1348859055619
+activated,view,org.eclipse.ui.views,3.4.1.M20090826-0800,"org.eclipse.ui.views.ContentOutline",1348859058585
+closed,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348859058586
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859065353
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859121775
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.file.import",1348859121798
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859124996
+opened,editor,org.eclipse.ui.editors,3.5.0.v20090527-2000,"org.eclipse.ui.DefaultTextEditor",1348859141372
+activated,editor,org.eclipse.ui.editors,3.5.0.v20090527-2000,"org.eclipse.ui.DefaultTextEditor",1348859141395
+started,bundle,org.eclipse.core.variables,3.2.200.v20090521,"org.eclipse.core.variables",1348859141894
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859144221
+activated,view,org.eclipse.ui.views,3.4.1.M20090826-0800,"org.eclipse.ui.views.ContentOutline",1348859144231
+activated,editor,org.eclipse.ui.editors,3.5.0.v20090527-2000,"org.eclipse.ui.DefaultTextEditor",1348859145432
+activated,view,org.eclipse.ui.views,3.4.1.M20090826-0800,"org.eclipse.ui.views.ContentOutline",1348859145472
+closed,editor,org.eclipse.ui.editors,3.5.0.v20090527-2000,"org.eclipse.ui.DefaultTextEditor",1348859145472
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859150629
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859175402
+executed,command,org.eclipse.ui.ide,3.5.1.M20090826-0800,"org.eclipse.ui.edit.text.openLocalFile",1348859175405
+started,bundle,org.eclipse.debug.core,3.5.0.v20090526-1600,"org.eclipse.debug.core",1348859184427
+started,bundle,org.eclipse.jdt.launching,3.5.0.v20090527,"org.eclipse.jdt.launching",1348859184442
+started,bundle,org.eclipse.jdt.launching.macosx,3.2.0.v20090527,"org.eclipse.jdt.launching.macosx",1348859184449
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859184878
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859201101
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348859212008

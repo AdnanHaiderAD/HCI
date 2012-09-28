@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863766090
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863787788
+closed,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863792257
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863792349
+closed,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863792375
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863792503
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.edit.delete",1348863792550
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.edit.undo",1348863810359
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863819278
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863884765
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863886017
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863889232
+error,log,,,"WARNING: Prevented recursive attempt to activate part org.eclipse.ui.navigator.ProjectExplorer while still in the middle of activating part org.eclipse.jdt.ui.CompilationUnitEditor",1348863889239
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863889284
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863902366
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863908823
+activated,view,org.eclipse.ui.navigator.resources,3.4.1.M20090826-0800,"org.eclipse.ui.navigator.ProjectExplorer",1348863908837
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863910980
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863911051
+activated,view,org.eclipse.ui.navigator.resources,3.4.1.M20090826-0800,"org.eclipse.ui.navigator.ProjectExplorer",1348863911135
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863912593
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348863912649
+activated,view,org.eclipse.ui.navigator.resources,3.4.1.M20090826-0800,"org.eclipse.ui.navigator.ProjectExplorer",1348863912727
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348863921452
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348864197689
