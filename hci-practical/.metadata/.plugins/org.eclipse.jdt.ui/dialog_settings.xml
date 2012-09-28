@@ -18,6 +18,9 @@
 	<section name="BuildPathsPropertyPage">
 		<item value="2" key="pageIndex"/>
 	</section>
+	<section name="ClasspathContainerSelectionPage">
+		<item value="2" key="index"/>
+	</section>
 	<section name="ProblemSeveritiesConfigurationBlock">
 		<item value="false" key="expanded4"/>
 		<item value="true" key="expanded3"/>
@@ -26,9 +29,6 @@
 		<item value="false" key="expanded6"/>
 		<item value="false" key="expanded5"/>
 		<item value="false" key="expanded0"/>
-	</section>
-	<section name="ClasspathContainerSelectionPage">
-		<item value="2" key="index"/>
 	</section>
 	<section name="JavaBuildConfigurationBlock">
 		<item value="false" key="expanded2"/>

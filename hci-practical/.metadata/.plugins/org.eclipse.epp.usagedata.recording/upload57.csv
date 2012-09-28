@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+java.specification.version,sysinfo,,,"1.6",1348858408320
+java.vendor,sysinfo,,,"Apple Inc.",1348858408320
+java.version,sysinfo,,,"1.6.0_22",1348858408320
+java.vm.info,sysinfo,,,"mixed mode",1348858408320
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1348858408320
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1348858408320
+java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1348858408320
+java.vm.specification.version,sysinfo,,,"1.0",1348858408320
+java.vm.vendor,sysinfo,,,"Apple Inc.",1348858408320
+java.vm.version,sysinfo,,,"17.1-b03-307",1348858408320
+activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1348858409375
+started,bundle,org.eclipse.debug.ui,3.5.1.v20090811_r351,"org.eclipse.debug.ui",1348858420495
+started,bundle,org.eclipse.wst.server.core,1.1.102.v20090825,"org.eclipse.wst.server.core",1348858420608
+started,bundle,org.eclipse.wst.server.ui,1.1.103.v20090909,"org.eclipse.wst.server.ui",1348858420620
+started,bundle,org.eclipse.jdt.debug,3.5.0.v20090526,"org.eclipse.jdt.debug",1348858420639
+started,bundle,org.eclipse.jdt.debug.ui,3.4.1.v20090811_r351,"org.eclipse.jdt.debug.ui",1348858420683
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348858421308
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348858436766
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348858450503
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348858466279
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348858466345
+activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1348858471956
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348858472058
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348858472118
+activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1348858481938
