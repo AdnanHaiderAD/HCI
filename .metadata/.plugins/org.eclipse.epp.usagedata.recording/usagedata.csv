@@ -1,26 +1,26 @@
 what,kind,bundleId,bundleVersion,description,time
-started,bundle,org.eclipse.ui.console,3.4.0.v20090513,"org.eclipse.ui.console",1348856031326
-started,bundle,org.eclipse.ui.editors,3.5.0.v20090527-2000,"org.eclipse.ui.editors",1348856031326
-started,bundle,org.eclipse.ui.forms,3.4.1.v20090714_35x,"org.eclipse.ui.forms",1348856031326
-started,bundle,org.eclipse.ui.ide,3.5.1.M20090826-0800,"org.eclipse.ui.ide",1348856031327
-started,bundle,org.eclipse.ui.net,1.2.1.r35x_20090812-1200,"org.eclipse.ui.net",1348856031327
-started,bundle,org.eclipse.ui.views,3.4.1.M20090826-0800,"org.eclipse.ui.views",1348856031327
-started,bundle,org.eclipse.ui.views.log,1.0.100.v20090731,"org.eclipse.ui.views.log",1348856031328
-started,bundle,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"org.eclipse.ui.workbench",1348856031328
-started,bundle,org.eclipse.ui.workbench.texteditor,3.5.0.v20090603,"org.eclipse.ui.workbench.texteditor",1348856031329
-started,bundle,org.eclipse.update.configurator,3.3.0.v20090312,"org.eclipse.update.configurator",1348856031329
-started,bundle,org.eclipse.update.core,3.2.300.v20090525,"org.eclipse.update.core",1348856031330
-started,bundle,org.eclipse.update.scheduler,3.2.200.v20081127,"org.eclipse.update.scheduler",1348856031330
-started,bundle,org.eclipse.wst.common.frameworks,1.1.300.v200904160730,"org.eclipse.wst.common.frameworks",1348856031330
-started,bundle,org.eclipse.wst.common.project.facet.core,1.4.1.v200908111817,"org.eclipse.wst.common.project.facet.core",1348856031330
-started,bundle,org.eclipse.wst.web,1.1.301.v200909021400,"org.eclipse.wst.web",1348856031331
-started,bundle,org.eclipse.wst.ws.service.policy.ui,1.0.102.v200903070248,"org.eclipse.wst.ws.service.policy.ui",1348856031331
-os,sysinfo,,,"macosx",1348856031334
-arch,sysinfo,,,"x86",1348856031334
-ws,sysinfo,,,"cocoa",1348856031334
-locale,sysinfo,,,"en_US",1348856031334
-processors,sysinfo,,,"2",1348856031334
-java.runtime.name,sysinfo,,,"Java(TM) SE Runtime Environment",1348856031334
-java.runtime.version,sysinfo,,,"1.6.0_22-b04-307-10M3811",1348856031334
-java.specification.name,sysinfo,,,"Java Platform API Specification",1348856031334
-java.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1348856031334
+java.specification.version,sysinfo,,,"1.6",1348856031334
+java.vendor,sysinfo,,,"Apple Inc.",1348856031334
+java.version,sysinfo,,,"1.6.0_22",1348856031334
+java.vm.info,sysinfo,,,"mixed mode",1348856031334
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1348856031334
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1348856031334
+java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1348856031334
+java.vm.specification.version,sysinfo,,,"1.0",1348856031334
+java.vm.vendor,sysinfo,,,"Apple Inc.",1348856031334
+java.vm.version,sysinfo,,,"17.1-b03-307",1348856031334
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348856033721
+deactivated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348856035696
+activated,workbench,org.eclipse.ui.workbench,3.5.1.M20090826-0800a,"",1348856371826
+activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1348856378178
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348856378179
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348856385658
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348856385718
+activated,view,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.PackageExplorer",1348856396216
+opened,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348856396247
+activated,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348856396299
+started,bundle,org.eclipse.compare,3.5.0.I20090514-0808,"org.eclipse.compare",1348856403639
+executed,command,org.eclipse.ui,3.5.1.M20090902-1000,"org.eclipse.ui.file.refresh",1348856408083
+started,bundle,org.eclipse.pde.core,3.5.100.v20090821,"org.eclipse.pde.core",1348856408332
+closed,editor,org.eclipse.jdt.ui,3.5.1.r351_v20090821-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1348856408422
+started,bundle,org.eclipse.debug.ui,3.5.1.v20090811_r351,"org.eclipse.debug.ui",1348856413095
