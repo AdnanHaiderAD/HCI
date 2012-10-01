@@ -47,7 +47,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 	 * default constructor, sets up the window properties
 	 */
 	public ImagePanel() {
-		//currentPolygon = new ArrayList<Point>();
+		currentPolygon = new ArrayList<Point>();
 		polygonsList = new ArrayList<ArrayList<Point>>();
 
 		this.setVisible(true);
@@ -58,7 +58,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 		this.setPreferredSize(panelSize);
 		this.setMaximumSize(panelSize);
 		
-		addMouseListener(this);
+		//addMouseListener(this);
 	}
 	
 	/**
@@ -80,6 +80,10 @@ public class ImagePanel extends JPanel implements MouseListener {
 	}
     public void createPolygon(){
     	currentPolygon = new ArrayList<Point>();
+    }
+    
+    public ArrayList<Point> get_currentPolygon(){
+    	return currentPolygon;
     }
 	/**
 	 * Displays the image
@@ -108,7 +112,9 @@ public class ImagePanel extends JPanel implements MouseListener {
 		}
 		
 		//display current polygon
-		drawPolygon(currentPolygon);
+		
+		//drawPolygon(currentPolygon);
+		
 	}
 	
 	/**
@@ -116,6 +122,8 @@ public class ImagePanel extends JPanel implements MouseListener {
 	 * @param polygon to be displayed
 	 */
 	public void drawPolygon(ArrayList<Point> polygon) {
+		System.out.println("current polygon has been drawn");
+	
 		Graphics2D g = (Graphics2D)this.getGraphics();
 		g.setColor(Color.GREEN);
 		for(int i = 0; i < polygon.size(); i++) {
@@ -160,10 +168,11 @@ public class ImagePanel extends JPanel implements MouseListener {
 	//@Override
 	public void mouseClicked(MouseEvent e) {
 		if (currentPolygon!=null){	
+			
 			int x = e.getX();
 			int y = e.getY();
 		
-		//check if the cursos withing image area
+		//check if the cursors withing image area
 				if (x > image.getWidth() || y > image.getHeight()) {
 			//if not do nothing
 					return;
@@ -171,7 +180,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 		
 				Graphics2D g = (Graphics2D)this.getGraphics();
 		
-		//if the left button than we will add a vertex to poly
+		//if the left button than we will add a vertex to polygon
 				if (e.getButton() == MouseEvent.BUTTON1) {
 				g.setColor(Color.GREEN);
 				if (currentPolygon.size() != 0) {

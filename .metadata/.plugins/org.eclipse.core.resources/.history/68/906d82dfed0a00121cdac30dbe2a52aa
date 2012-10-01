@@ -1,0 +1,28 @@
+package hci;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+public class test {
+
+	
+	public void testin(){
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//JOptionPane.showMessageDialog(frame, "hello");
+		//JOptionPane.showMessageDialog(frame, "what the hell are you doing", "warning", JOptionPane.WARNING_MESSAGE);
+		
+		Object[] options ={"Yes","no", "Fuck off"};
+		int n = JOptionPane.showOptionDialog(frame, "Do you want to go for a coffee", "Ask out",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		
+		
+		frame.pack();
+		//frame.setVisible(true);
+	}
+	
+	public static void main(String[] args){
+		test hell = new test();
+		hell.testin();
+	}
+}

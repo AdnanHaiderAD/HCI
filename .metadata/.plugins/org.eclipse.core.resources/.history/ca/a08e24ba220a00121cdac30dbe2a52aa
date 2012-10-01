@@ -1,0 +1,43 @@
+package hci;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class Annotation {
+
+	private JFrame frame;
+	private JTextField  field;
+	public void annotate(){
+		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		JPanel annotatepanel = new JPanel();
+		
+		JLabel label = new JLabel("Label");
+		annotatepanel.add(label);
+		
+		
+		field = new JTextField(20);
+		
+		field.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(field.getText());
+				frame.dispose();
+			}
+		});
+		annotatepanel.add(field);
+		frame.getContentPane().add (annotatepanel);
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	public static void main (String[] args){
+		Annotation annot = new Annotation();
+		annot.annotate();
+	}
+	
+}
