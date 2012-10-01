@@ -1,4 +1,4 @@
-package hci.utils;
+package utils;
 
 /**
  * simple class for handling points
