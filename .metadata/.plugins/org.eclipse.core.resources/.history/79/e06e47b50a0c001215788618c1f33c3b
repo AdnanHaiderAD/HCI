@@ -14,8 +14,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -46,9 +44,6 @@ public class ImageLabeller extends JFrame {
 	
 	/* contains  list of labels*/
 	 JPanel listOfLabels=null;
-	 
-	 /*the current label added to the panel*/
-	 JLabel currentLabel=null;
 	/**
 	 * image panel - displays image and editing area
 	 */
@@ -152,43 +147,11 @@ public class ImageLabeller extends JFrame {
 			    	JFrame dialogue_frame = new JFrame();
 			    	String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
 			    	addNewPolygon(label_msg);//create new polygon indexed by this string
-			        currentLabel =new JLabel(label_msg);
+			    	JLabel currentLabel =new JLabel(label_msg);
 			    	currentLabel.setForeground(Color.red);
 			    	listOfLabels.add(currentLabel);
 			    	listOfLabels.revalidate();
 			    	listOfLabels.repaint();
-			    	
-			    	
-			    	currentLabel.addMouseListener(new MouseListener(){
-
-						public void mouseClicked(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-							
-						}
-
-						public void mouseEntered(MouseEvent e) {
-							// TODO Auto-generated method stub
-							String key = currentLabel.getText();
-							imagePanel.displayPolygon(key);
-							
-						}
-
-						public void mouseExited(MouseEvent e2) {
-							// TODO Auto-generated method stub
-							imagePanel.revalidate();
-						}
-
-						public void mousePressed(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-							
-						}
-
-						public void mouseReleased(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-							
-						}
-			    		
-			    	});
 			    	
 			    	
 			}

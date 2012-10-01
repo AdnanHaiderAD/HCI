@@ -173,9 +173,10 @@ public class ImageLabeller extends JFrame {
 							
 						}
 
-						public void mouseExited(MouseEvent e2) {
+						public void mouseExited(MouseEvent e) {
 							// TODO Auto-generated method stub
 							imagePanel.revalidate();
+							imagePanel.repaint();
 						}
 
 						public void mousePressed(MouseEvent arg0) {

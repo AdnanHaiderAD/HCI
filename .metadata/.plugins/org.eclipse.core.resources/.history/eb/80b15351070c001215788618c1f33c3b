@@ -13,8 +13,6 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 import hci.utils.*;
 
@@ -42,18 +40,15 @@ public class ImagePanel extends JPanel implements MouseListener {
 	/**
 	 * list of polygons
 	 */
-	/* Hash table is now used instead of the arraylist*/
-	//private ArrayList<ArrayList<Point>> polygonsList = null;
+	private ArrayList<ArrayList<Point>> polygonsList = null;
 	
-	private Hashtable<String,ArrayList<Point>> polygontable = null;
 	
 	/**
 	 * default constructor, sets up the window properties
 	 */
 	public ImagePanel() {
 		currentPolygon = new ArrayList<Point>();
-		polygontable = new Hashtable<String,ArrayList<Point>>();
-		//polygonsList = new ArrayList<ArrayList<Point>>();
+		polygonsList = new ArrayList<ArrayList<Point>>();
 
 		this.setVisible(true);
 
@@ -107,22 +102,14 @@ public class ImagePanel extends JPanel implements MouseListener {
 	public void paint(Graphics g) {
 		super.paint(g);
 		
-		//display image
+		//display iamge
 		ShowImage();
 		
-		//display all the polygons  using informatio from the hashtable
-		Enumeration e = polygontable.elements();
-		while(e.hasMoreElements()){
-			ArrayList<Point> polygon = (ArrayList<Point>)polygontable.get(e.nextElement());
-			drawPolygon(polygon,Color.GREEN);
-			finishPolygon(polygon, Color.GREEN);
+		//display all the completed polygons
+		for(ArrayList<Point> polygon : polygonsList) {
+			drawPolygon(polygon);
+			finishPolygon(polygon);
 		}
-		
-		//display all the completed polygons( this is michals code)
-		//for(ArrayList<Point> polygon : polygonsList) {
-			//drawPolygon(polygon);
-			//finishPolygon(polygon);
-	//	}
 		
 		//display current polygon
 		
@@ -130,23 +117,15 @@ public class ImagePanel extends JPanel implements MouseListener {
 		
 	}
 	
-	//displays the polygon indexed by the key in the hash table
-	public void  displayPolygon(String key){
-		ArrayList<Point> polygon = (ArrayList<Point>)polygontable.get(key);
-		drawPolygon(polygon,Color.red);
-		finishPolygon(polygon, Color.red);
-	}
-	
 	/**
 	 * displays a polygon without last stroke
 	 * @param polygon to be displayed
 	 */
-	public void drawPolygon(ArrayList<Point> polygon, Color color) {
+	public void drawPolygon(ArrayList<Point> polygon) {
 		System.out.println("current polygon has been drawn");
 	
 		Graphics2D g = (Graphics2D)this.getGraphics();
-		g.setColor(color);
-		//g.setColor(Color.GREEN);
+		g.setColor(Color.GREEN);
 		for(int i = 0; i < polygon.size(); i++) {
 			Point currentVertex = polygon.get(i);
 			if (i != 0) {
@@ -161,15 +140,14 @@ public class ImagePanel extends JPanel implements MouseListener {
 	 * displays last stroke of the polygon (arch between the last and first vertices)
 	 * @param polygon to be finished
 	 */
-	public void finishPolygon(ArrayList<Point> polygon, Color color) {
+	public void finishPolygon(ArrayList<Point> polygon) {
 		//if there are less than 3 vertices than nothing to be completed
 		if (polygon.size() >= 3) {
 			Point firstVertex = polygon.get(0);
 			Point lastVertex = polygon.get(polygon.size() - 1);
 		
 			Graphics2D g = (Graphics2D)this.getGraphics();
-			g.setColor(color);
-			//g.setColor(Color.GREEN);
+			g.setColor(Color.GREEN);
 			g.drawLine(firstVertex.getX(), firstVertex.getY(), lastVertex.getX(), lastVertex.getY());
 		}
 	}
@@ -177,11 +155,11 @@ public class ImagePanel extends JPanel implements MouseListener {
 	/**
 	 * moves current polygon to the list of polygons and makes pace for a new one
 	 */
-	public void addNewPolygon(String key) {
+	public void addNewPolygon() {
 		//finish the current polygon if any
 		if (currentPolygon != null ) {
-			finishPolygon(currentPolygon,Color.GREEN);
-			polygontable.put(key,currentPolygon);
+			finishPolygon(currentPolygon);
+			polygonsList.add(currentPolygon);
 		}
 		
 		currentPolygon = null;
