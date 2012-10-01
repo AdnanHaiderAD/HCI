@@ -1,18 +1,17 @@
-package hci;
+
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 /**
  * Main class of the program - handles display of the main window
  * @author Michal
@@ -46,7 +45,7 @@ public class ImageLabeller extends JFrame {
 		imagePanel.addNewPolygon();
 	}
 	
-	@Override
+	//@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		imagePanel.paint(g); //update image panel
@@ -62,10 +61,8 @@ public class ImageLabeller extends JFrame {
 		  	public void windowClosing(WindowEvent event) {
 		  		//here we exit the program (maybe we should ask if the user really wants to do it?)
 		  		//maybe we also want to store the polygons somewhere? and read them next time
-		  		//System.out.println("Bye bye!");
-		    	//System.exit(0);
-		  		CloseApp_query.closeapp_query();// asks the user whether the user really wants to quit the application.
-		  		
+		  		System.out.println("Bye bye!");
+		    	System.exit(0);
 		  	}
 		});
 
@@ -89,6 +86,7 @@ public class ImageLabeller extends JFrame {
 		newPolyButton.setSize(50, 20);
 		newPolyButton.setEnabled(true);
 		newPolyButton.addActionListener(new ActionListener() {
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 			    	addNewPolygon();
 			}
@@ -109,13 +107,10 @@ public class ImageLabeller extends JFrame {
 	 * Runs the program
 	 * @param argv path to an image
 	 */
-	
-	
 	public static void main(String argv[]) {
 		try {
 			//create a window and display the image
 			ImageLabeller window = new ImageLabeller();
-			window.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 			window.setupGUI(argv[0]);
 		} catch (Exception e) {
 			System.err.println("Image: " + argv[0]);

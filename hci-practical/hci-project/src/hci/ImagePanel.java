@@ -171,10 +171,11 @@ public class ImagePanel extends JPanel implements MouseListener {
 			
 			int x = e.getX();
 			int y = e.getY();
-		
-		//check if the cursors withing image area
+		    
+		//check if the cursors with in image area
 				if (x > image.getWidth() || y > image.getHeight()) {
 			//if not do nothing
+					System.out.println("image width is "+ image.getWidth());
 					return;
 				}
 		

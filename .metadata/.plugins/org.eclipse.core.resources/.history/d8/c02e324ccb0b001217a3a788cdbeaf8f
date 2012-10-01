@@ -121,7 +121,7 @@ public class ImageLabeller extends JFrame {
 				    }
 				    
 				if (getMouseListeners().length ==0){ 
-				   imagePanel. addMouseListener(imagePanel);
+				    addMouseListener(imagePanel);
 				}
 			    	imagePanel.createPolygon();
 			}
