@@ -128,12 +128,10 @@ public class ImagePanel extends JPanel implements MouseListener {
 		//display image
 		ShowImage();
 		
-		//display all the polygons  using informatio from the hashtable
-		Enumeration e = polygontable.elements();
+		//display all the polygons  using information from the hashtable
+		Enumeration e = polygontable.keys();
 		while(e.hasMoreElements()){
-			ArrayList<Point> polygon = (ArrayList<Point>)polygontable.get(e.nextElement());
-			drawPolygon(polygon,Color.GREEN);
-			finishPolygon(polygon, Color.GREEN);
+			displayPolygon((String)e.nextElement(),Color.GREEN);
 		}
 		
 		//display all the completed polygons( this is michals code)
@@ -149,10 +147,10 @@ public class ImagePanel extends JPanel implements MouseListener {
 	}
 	
 	//displays the polygon indexed by the key in the hash table
-	public void  displayPolygon(String key){
+	public void  displayPolygon(String key, Color color){
 		ArrayList<Point> polygon = (ArrayList<Point>)polygontable.get(key);
-		drawPolygon(polygon,Color.red);
-		finishPolygon(polygon, Color.red);
+		drawPolygon(polygon,color);
+		finishPolygon(polygon, color);
 	}
 	
 	/**

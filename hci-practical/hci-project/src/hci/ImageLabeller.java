@@ -1,5 +1,14 @@
 package hci;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDesktopPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,10 +30,11 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.filechooser.FileFilter;
+
+import java.util.Hashtable;
+
 
 /**
  * Main class of the program - handles display of the main window
@@ -47,20 +57,19 @@ public class ImageLabeller extends JFrame {
 	 * toolbox - put all buttons and stuff here!
 	 */
 	JPanel toolboxPanel = null;
-
-	/* contains the list of labels alongs with labls caption */
-	JPanel labelPanel = null;
-
-	/* contains list of labels */
-	JPanel listOfLabels = null;
-
-	/* the current label added to the panel */
-	JLabel currentLabel = null;
+	
+	/* containers to hold and display labels created by the user */
+	JDesktopPane desktop =null;
+	JInternalFrame  internalFrame=null;
+	JPanel LabelPanel = null;
+	 
+	 /*Table of labels*/
+	 Hashtable<String,JLabel> label_lookup= new Hashtable<String,JLabel>();
 	/**
 	 * image panel - displays image and editing area
 	 */
-	ImagePanel imagePanel = null;
-
+	 ImagePanel imagePanel = null;
+	
 	/**
 	 * handles New Object button action
 	 */
@@ -68,11 +77,9 @@ public class ImageLabeller extends JFrame {
 		imagePanel.addNewPolygon(key);
 	}
 
-	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		imagePanel.paint(g); // update image panel
-
 	}
 
 	/**
@@ -178,29 +185,33 @@ public class ImageLabeller extends JFrame {
 		
 		// Create and set up the image panel.
 		imagePanel = new ImagePanel(imageFilename);
-		imagePanel.setOpaque(true); // content panes must be opaque
+		imagePanel.setOpaque(true); //content panes must be opaque
+		
+        appPanel.add(imagePanel);
 
-		appPanel.add(imagePanel);
+        //create toolbox panel
+        toolboxPanel = new JPanel();
+        toolboxPanel.setLayout(new BoxLayout(toolboxPanel, BoxLayout.Y_AXIS));
+        
+        ///create destopPane to the frame that displays list of labels
+        desktop =new JDesktopPane();
+        desktop.setOpaque(false);
+        toolboxPanel.add(desktop);
+        
+        //create internal frame to hold the list of labels
+        internalFrame = new JInternalFrame("List of Labels", true,true,true);
+        int loc_x = desktop.getLocation().x;
+        int loc_y = desktop.getLocation().y;
+        internalFrame.setBounds(loc_x, loc_y, 200, 100);
+       
+        
+        LabelPanel = new JPanel();// this ensures the new labels are stacked vertically.
+        LabelPanel.setLayout(new BoxLayout(LabelPanel,BoxLayout.Y_AXIS));
+        internalFrame.getContentPane().add(LabelPanel);
+        desktop.add(internalFrame);
+        
 
-		// create toolbox panel
-		toolboxPanel = new JPanel();
-		toolboxPanel.setLayout(new BoxLayout(toolboxPanel, BoxLayout.Y_AXIS));
-
-		// create labelPanel
-		labelPanel = new JPanel();
-		labelPanel.setLayout(new BorderLayout());
-		labelPanel.add(new JLabel("List of Labels"), BorderLayout.WEST);// add
-																		// the
-																		// 'label'
-																		// caption
-
-		listOfLabels = new JPanel();// holds all the annotations
-		listOfLabels.setLayout(new BoxLayout(listOfLabels, BoxLayout.Y_AXIS));
-
-		labelPanel.add(listOfLabels, BorderLayout.EAST);
-		toolboxPanel.add(labelPanel);
-
-		// Add button to the toolbox
+        //Add button to the toolbox
 		JButton newPolyButton = new JButton("Create new object");
 		newPolyButton.setMnemonic(KeyEvent.VK_N);
 		newPolyButton.setSize(50, 20);
@@ -208,23 +219,20 @@ public class ImageLabeller extends JFrame {
 		newPolyButton.addActionListener(new ActionListener() {
 			// @Override
 			public void actionPerformed(ActionEvent e) {
-				/*
-				 * if the create button was pressed before the finish button ,
-				 * the existing polygon is removed
-				 */
-				if (imagePanel.get_currentPolygon() != null) {
 
-					imagePanel.repaint();
-
-				}
-
-				if (getMouseListeners().length == 0) {
-
-					imagePanel.addMouseListener(imagePanel);
+				/*if the create button was pressed before the finish button , the existing polygon is removed */
+				    if (imagePanel.get_currentPolygon()!=null){
+				    	
+				    	imagePanel.repaint();
+				    	
+				    }
+				    
+				if (imagePanel.getMouseListeners().length ==0){ 
 
 					imagePanel.addMouseListener(imagePanel);
 
 				}
+
 				imagePanel.createPolygon();
 			}
 		});
@@ -238,58 +246,85 @@ public class ImageLabeller extends JFrame {
 		closeButton.addActionListener(new ActionListener() {
 			// @Override
 			public void actionPerformed(ActionEvent e) {
+			    	
+			    	// create a dialogue to ask the user for an annotation
+			    	JFrame dialogue_frame = new JFrame();
+			    	String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
+			    	addNewPolygon(label_msg);//create new polygon indexed by this string
+			    	
+			    	
+			        label_lookup.put(label_msg,new JLabel(label_msg) );
+			        ((JLabel) label_lookup.get(label_msg)).setForeground(Color.red);
+			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
+			    	if (!internalFrame.isVisible()){
+			    		internalFrame.setOpaque(true);
+			    		internalFrame.setVisible(true);
+			    	}
+			    	
+			    	internalFrame.revalidate();
+			    	internalFrame.repaint();
+			    	
+			    	((JLabel) label_lookup.get(label_msg)).addMouseListener(new MouseListener(){
 
-				// create a dialogue to ask the user for an annotation
-				JFrame dialogue_frame = new JFrame();
-				String label_msg = (String) JOptionPane.showInputDialog(
-						dialogue_frame, "Please type in your prefered Label",
-						"Annotator", JOptionPane.OK_OPTION, null, null, null);
-				addNewPolygon(label_msg);// create new polygon indexed by this
-											// string
-				currentLabel = new JLabel(label_msg);
-				currentLabel.setForeground(Color.red);
-				listOfLabels.add(currentLabel);
-				listOfLabels.revalidate();
-				listOfLabels.repaint();
+						public void mouseClicked(MouseEvent arg0) {
+							// TODO Auto-generated method stub
+							
+						}
 
-				currentLabel.addMouseListener(new MouseListener() {
+						public void mouseEntered(MouseEvent e) {
+							// TODO Auto-generated method stub
+							String key = ((JLabel)e.getSource()).getText();
+							imagePanel.displayPolygon(key, Color.red);
+							
+						}
 
-					public void mouseClicked(MouseEvent arg0) {
-						// TODO Auto-generated method stub
+						public void mouseExited(MouseEvent e2) {
+							// TODO Auto-generated method stub
+							String key = ((JLabel)e2.getSource()).getText();
+							imagePanel.displayPolygon(key, Color.GREEN);
+						}
 
-					}
+						public void mousePressed(MouseEvent arg0) {
+							// TODO Auto-generated method stub
+							
+						}
 
-					public void mouseEntered(MouseEvent e) {
-						// TODO Auto-generated method stub
-						String key = currentLabel.getText();
-						imagePanel.displayPolygon(key);
-
-					}
-
-					public void mouseExited(MouseEvent e2) {
-						// TODO Auto-generated method stub
-						imagePanel.revalidate();
-					}
-
-					public void mousePressed(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-
-					}
-
-					public void mouseReleased(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-
-					}
-
-				});
-
+						public void mouseReleased(MouseEvent arg0) {
+							// TODO Auto-generated method stub
+							
+						}
+			    		
+			    	});
+			    	
+			    	
 			}
 		});
-		closeButton.setToolTipText("click if you have finished segmenting");
+		closeButton.setToolTipText("click to add new polygon");
 		toolboxPanel.add(closeButton);
+		
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setMnemonic(KeyEvent.VK_N);
+		cancelButton.setSize(50,20);
+		cancelButton.setEnabled(true);
+		cancelButton.addActionListener(new ActionListener() {
 
-		// add toolbox to window
-		toolboxPanel.setPreferredSize(new Dimension(200, 500));
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				  if (imagePanel.get_currentPolygon()!=null){
+				    	
+				    	imagePanel.repaint();
+				    	
+				    }
+				    
+			}
+			
+		});
+		cancelButton.setToolTipText("Remove the current Polygon");
+		toolboxPanel.add(cancelButton);
+	
+	
+		//add toolbox to window
+		toolboxPanel.setPreferredSize(new Dimension(200,500));
 		appPanel.add(toolboxPanel);
 
 		// display all the stuff
