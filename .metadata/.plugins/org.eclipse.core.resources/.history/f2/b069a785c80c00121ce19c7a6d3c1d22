@@ -213,25 +213,7 @@ public class ImageLabeller extends JFrame {
 		closeButton.setToolTipText("click to add new polygon");
 		toolboxPanel.add(closeButton);
 		
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.setMnemonic(KeyEvent.VK_N);
-		cancelButton.setSize(50,20);
-		cancelButton.setEnabled(true);
-		cancelButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				  if (imagePanel.get_currentPolygon()!=null){
-				    	
-				    	imagePanel.repaint();
-				    	
-				    }
-				    
-			}
-			
-		});
-		cancelButton.setToolTipText("Remove the current Polygon");
-		toolboxPanel.add(cancelButton);
+		
 	
 	
 		//add toolbox to window

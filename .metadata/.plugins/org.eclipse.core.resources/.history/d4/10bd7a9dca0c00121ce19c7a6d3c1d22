@@ -111,7 +111,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 		ShowImage();
 		
 		//display all the polygons  using information from the hashtable
-		Enumeration e = polygontable.keys();
+		Enumeration e = polygontable.elements();
 		while(e.hasMoreElements()){
 			displayPolygon((String)e.nextElement(),Color.GREEN);
 		}
