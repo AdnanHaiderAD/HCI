@@ -42,7 +42,7 @@ public class Annotation {
 		//annotatepanel.add(field);
 	    JInternalFrame internalFrame = new JInternalFrame("Internal Frame", true,true,true);
 	    		internalFrame.setBounds(50, 50, 200, 100);
-	    		desktop.add(internalFrame);
+	    		desktop.add(internalFrame, new Integer(1));
 	    		internalFrame.setVisible(true);
 	    		
 	    		frame.setVisible(true);

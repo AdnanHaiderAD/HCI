@@ -111,7 +111,7 @@ public class ImageLabeller extends JFrame {
         int loc_x = desktop.getLocation().x;
         int loc_y = desktop.getLocation().y;
         internalFrame.setBounds(loc_x, loc_y, 200, 100);
-       
+		internalFrame.setVisible(true);
         
         LabelPanel = new JPanel();// this ensures the new labels are stacked vertically.
         LabelPanel.setLayout(new BoxLayout(LabelPanel,BoxLayout.Y_AXIS));
@@ -167,10 +167,6 @@ public class ImageLabeller extends JFrame {
 			        label_lookup.put(label_msg,new JLabel(label_msg) );
 			        ((JLabel) label_lookup.get(label_msg)).setForeground(Color.red);
 			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
-			    	if (!internalFrame.isVisible()){
-			    		internalFrame.setOpaque(true);
-			    		internalFrame.setVisible(true);
-			    	}
 			    	
 			    	internalFrame.revalidate();
 			    	internalFrame.repaint();

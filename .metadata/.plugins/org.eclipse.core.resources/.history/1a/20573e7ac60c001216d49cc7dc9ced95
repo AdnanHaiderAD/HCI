@@ -103,15 +103,15 @@ public class ImageLabeller extends JFrame {
         
         ///create destopPane to the frame that displays list of labels
         desktop =new JDesktopPane();
-        desktop.setOpaque(false);
+        desktop.setOpaque(true);
         toolboxPanel.add(desktop);
         
         //create internal frame to hold the list of labels
-        internalFrame = new JInternalFrame("List of Labels", true,true,true);
+        internalFrame = new JInternalFrame("Internal Frame", true,true,true);
         int loc_x = desktop.getLocation().x;
         int loc_y = desktop.getLocation().y;
         internalFrame.setBounds(loc_x, loc_y, 200, 100);
-       
+		internalFrame.setVisible(true);
         
         LabelPanel = new JPanel();// this ensures the new labels are stacked vertically.
         LabelPanel.setLayout(new BoxLayout(LabelPanel,BoxLayout.Y_AXIS));
@@ -167,10 +167,6 @@ public class ImageLabeller extends JFrame {
 			        label_lookup.put(label_msg,new JLabel(label_msg) );
 			        ((JLabel) label_lookup.get(label_msg)).setForeground(Color.red);
 			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
-			    	if (!internalFrame.isVisible()){
-			    		internalFrame.setOpaque(true);
-			    		internalFrame.setVisible(true);
-			    	}
 			    	
 			    	internalFrame.revalidate();
 			    	internalFrame.repaint();

@@ -131,10 +131,10 @@ public class ImagePanel extends JPanel implements MouseListener {
 	}
 	
 	//displays the polygon indexed by the key in the hash table
-	public void  displayPolygon(String key, Color color){
+	public void  displayPolygon(String key){
 		ArrayList<Point> polygon = (ArrayList<Point>)polygontable.get(key);
-		drawPolygon(polygon,color);
-		finishPolygon(polygon, color);
+		drawPolygon(polygon,Color.red);
+		finishPolygon(polygon, Color.red);
 	}
 	
 	/**

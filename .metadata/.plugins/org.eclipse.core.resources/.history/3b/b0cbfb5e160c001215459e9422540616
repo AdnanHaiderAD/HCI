@@ -2,9 +2,7 @@ package hci;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,8 +18,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import java.util.Hashtable;
 
 
 /**
@@ -45,17 +41,18 @@ public class ImageLabeller extends JFrame {
 	 */
 	JPanel toolboxPanel = null;
 	
-	/* containers to hold and display labels created by the user */
-	JDesktopPane desktop =null;
-	JInternalFrame  internalFrame=null;
-	JPanel LabelPanel = null;
+	/*contains the list of labels alongs with labls caption*/
+	JPanel labelPanel=null;
+	
+	/* contains  list of labels*/
+	 JPanel listOfLabels=null;
 	 
-	 /*Table of labels*/
-	 Hashtable<String,JLabel> label_lookup= new Hashtable<String,JLabel>();
+	 /*the current label added to the panel*/
+	 JLabel currentLabel=null;
 	/**
 	 * image panel - displays image and editing area
 	 */
-	 ImagePanel imagePanel = null;
+	ImagePanel imagePanel = null;
 	
 	/**
 	 * handles New Object button action
@@ -101,25 +98,17 @@ public class ImageLabeller extends JFrame {
         toolboxPanel = new JPanel();
         toolboxPanel.setLayout(new BoxLayout(toolboxPanel, BoxLayout.Y_AXIS));
         
-        ///create destopPane to the frame that displays list of labels
-        desktop =new JDesktopPane();
-        desktop.setOpaque(false);
-        toolboxPanel.add(desktop);
         
-        //create internal frame to hold the list of labels
-        internalFrame = new JInternalFrame("List of Labels", true,true,true);
-        int loc_x = desktop.getLocation().x;
-        int loc_y = desktop.getLocation().y;
-        internalFrame.setBounds(loc_x, loc_y, 200, 100);
-       
+        //create labelPanel
+        labelPanel= new JPanel();
+        labelPanel.setLayout(new BorderLayout());
+        labelPanel.add(new JLabel("List of Labels"),BorderLayout.WEST);//add the 'label' caption
         
-        LabelPanel = new JPanel();// this ensures the new labels are stacked vertically.
-        LabelPanel.setLayout(new BoxLayout(LabelPanel,BoxLayout.Y_AXIS));
-        internalFrame.getContentPane().add(LabelPanel);
-        desktop.add(internalFrame);
+        listOfLabels = new JPanel();//holds all the annotations
+        listOfLabels.setLayout(new BoxLayout(listOfLabels,BoxLayout.Y_AXIS));
         
-        
-       
+        labelPanel.add(listOfLabels,BorderLayout.EAST);
+        toolboxPanel.add(labelPanel);
         
         //Add button to the toolbox
 		JButton newPolyButton = new JButton("Create new object");
@@ -136,11 +125,12 @@ public class ImageLabeller extends JFrame {
 				    	
 				    }
 				    
-				if (imagePanel.getMouseListeners().length ==0){ 
+				if (getMouseListeners().length ==0){ 
 
 				   imagePanel. addMouseListener(imagePanel);
 
-				    
+				    imagePanel.addMouseListener(imagePanel);
+
 				}
 			    	imagePanel.createPolygon();
 			}
@@ -162,20 +152,14 @@ public class ImageLabeller extends JFrame {
 			    	JFrame dialogue_frame = new JFrame();
 			    	String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
 			    	addNewPolygon(label_msg);//create new polygon indexed by this string
+			        currentLabel =new JLabel(label_msg);
+			    	currentLabel.setForeground(Color.red);
+			    	listOfLabels.add(currentLabel);
+			    	listOfLabels.revalidate();
+			    	listOfLabels.repaint();
 			    	
 			    	
-			        label_lookup.put(label_msg,new JLabel(label_msg) );
-			        ((JLabel) label_lookup.get(label_msg)).setForeground(Color.red);
-			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
-			    	if (!internalFrame.isVisible()){
-			    		internalFrame.setOpaque(true);
-			    		internalFrame.setVisible(true);
-			    	}
-			    	
-			    	internalFrame.revalidate();
-			    	internalFrame.repaint();
-			    	
-			    	((JLabel) label_lookup.get(label_msg)).addMouseListener(new MouseListener(){
+			    	currentLabel.addMouseListener(new MouseListener(){
 
 						public void mouseClicked(MouseEvent arg0) {
 							// TODO Auto-generated method stub
@@ -184,15 +168,14 @@ public class ImageLabeller extends JFrame {
 
 						public void mouseEntered(MouseEvent e) {
 							// TODO Auto-generated method stub
-							String key = ((JLabel)e.getSource()).getText();
-							imagePanel.displayPolygon(key, Color.red);
+							String key = currentLabel.getText();
+							imagePanel.displayPolygon(key);
 							
 						}
 
 						public void mouseExited(MouseEvent e2) {
 							// TODO Auto-generated method stub
-							String key = ((JLabel)e2.getSource()).getText();
-							imagePanel.displayPolygon(key, Color.GREEN);
+							imagePanel.revalidate();
 						}
 
 						public void mousePressed(MouseEvent arg0) {
@@ -210,7 +193,7 @@ public class ImageLabeller extends JFrame {
 			    	
 			}
 		});
-		closeButton.setToolTipText("click to add new polygon");
+		closeButton.setToolTipText("click if you have finished segmenting");
 		toolboxPanel.add(closeButton);
 		
 		

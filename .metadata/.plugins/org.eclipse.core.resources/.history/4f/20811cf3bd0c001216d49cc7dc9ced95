@@ -1,10 +1,8 @@
 package hci;
 
-import java.awt.BorderLayout;
+//import java.awt.BorderLayout;
 //import java.awt.event.ActionEvent;
 //import java.awt.event.ActionListener;
-
-
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -21,9 +19,7 @@ public class Annotation {
 	public static void annotate(){
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		 JDesktopPane desktop = new JDesktopPane();
-	    desktop.setOpaque(true);
-	    frame.getContentPane().add(desktop, BorderLayout.CENTER);
+		JPanel annotatepanel = new JPanel();
 		
 		//JLabel msg = new JLabel ("Please provide an annotation for the segment");
 		
@@ -40,18 +36,21 @@ public class Annotation {
 		//	}
 		//});
 		//annotatepanel.add(field);
-	    JInternalFrame internalFrame = new JInternalFrame("Internal Frame", true,true,true);
-	    		internalFrame.setBounds(50, 50, 200, 100);
-	    		desktop.add(internalFrame);
-	    		internalFrame.setVisible(true);
-	    		
-	    		frame.setVisible(true);
-		
+		JDesktopPane desktop = new JDesktopPane();
+		JInternalFrame intFrame= new JInternalFrame();
+		intFrame.setJMenuBar(new JMenuBar());
+	    
+		intFrame.setVisible(true);
+		desktop.add(intFrame);
+		annotatepanel.add(desktop);
+		intFrame.setLocation(frame.getLocation());
+		frame.getContentPane().add (annotatepanel);
+		//frame.getContentPane().add(BorderLayout.NORTH,msg);
+		frame.pack();
+		frame.setVisible(true);
 	}
 	
 	public static void main(String[] args){
 		Annotation.annotate();
 	}
-	
-	
 }
