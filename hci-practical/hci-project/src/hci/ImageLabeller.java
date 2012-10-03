@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
@@ -113,6 +114,7 @@ public class ImageLabeller extends JFrame {
 		this.setJMenuBar(menubar);
 		menubar.setVisible(true);
 		
+		//file menu
 		JMenu filemenu = new JMenu("File");
 		filemenu.setVisible(true);
 		menubar.add(filemenu);
@@ -132,6 +134,8 @@ public class ImageLabeller extends JFrame {
 		fileItem3.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_DOWN_MASK));
 		fileItem4.setAccelerator(KeyStroke.getKeyStroke('Q', CTRL_DOWN_MASK));
 		
+		
+		//edit menu
 		JMenu editmenu = new JMenu("Edit");
 		editmenu.setVisible(true);
 		menubar.add(editmenu);
@@ -158,6 +162,7 @@ public class ImageLabeller extends JFrame {
 				if(rVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						imagePanel.changePicture(chooser.getSelectedFile().getAbsolutePath());
+			            LabelPanel.removeAll();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -187,17 +192,51 @@ public class ImageLabeller extends JFrame {
 			            imagePanel.loadProject((SerializableImage) in.readObject(), (Hashtable<String, ArrayList<Point>>) in.readObject(), (ArrayList<Point>) in.readObject());
 			            in.close();
 			            fileIn.close();
-			        }catch(IOException i)
-			        {
-			            i.printStackTrace();
+			            
+			            //remove everything in the label panel
+			            LabelPanel.removeAll();
+			            
+			            //put the new JLabels
+			            Enumeration en = imagePanel.getPolygonTable().keys();
+			    		while(en.hasMoreElements()){
+			    			
+			    			String label = (String) en.nextElement();
+			            	label_lookup.put(label, new JLabel(label) );
+			            	((JLabel) label_lookup.get(label)).setForeground(Color.red);
+			            	LabelPanel.add((JLabel) label_lookup.get(label));
+			            	((JLabel) label_lookup.get(label)).addMouseListener(new MouseListener(){
+
+								public void mouseEntered(MouseEvent e) {
+									// TODO Auto-generated method stub
+									String key = ((JLabel)e.getSource()).getText();
+									imagePanel.displayPolygon(key, Color.red);
+								}
+
+								public void mouseExited(MouseEvent e2) {
+									// TODO Auto-generated method stub
+									String key = ((JLabel)e2.getSource()).getText();
+									imagePanel.displayPolygon(key, Color.GREEN);
+								}
+								
+								public void mouseClicked(MouseEvent arg0) {
+								}
+								public void mousePressed(MouseEvent arg0) {
+								}
+								public void mouseReleased(MouseEvent arg0) {
+								}
+					    	});
+			            	visiualizeLabelFrame();
+			            	
+			            }
+			            
+			        }catch(IOException ee) {
+			            ee.printStackTrace();
 			            return;
-			        }catch(ClassNotFoundException c)
-			        {
+			        }catch(ClassNotFoundException c) {
 			            System.out.println("The project cannot be opened");
 			            c.printStackTrace();
 			            return;
 			        } catch (Exception e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}
 				}
@@ -215,7 +254,11 @@ public class ImageLabeller extends JFrame {
 				if(rVal == JFileChooser.APPROVE_OPTION) {
 					try
 				      {
-				         FileOutputStream fileOut = new FileOutputStream(chooser.getSelectedFile());
+						 File selectedFile = chooser.getSelectedFile();
+						 if (!getExtension(selectedFile.getName()).equals("ser")) {
+							 selectedFile = new File(selectedFile.getAbsolutePath().concat(".ser"));
+						 }
+				         FileOutputStream fileOut = new FileOutputStream(selectedFile);
 				         ObjectOutputStream out = new ObjectOutputStream(fileOut);
 				         out.writeObject(imagePanel.getSerializableImage());
 				         out.writeObject(imagePanel.getPolygonTable());
@@ -330,13 +373,7 @@ public class ImageLabeller extends JFrame {
 			        label_lookup.put(label_msg,new JLabel(label_msg) );
 			        ((JLabel) label_lookup.get(label_msg)).setForeground(Color.red);
 			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
-			    	if (!internalFrame.isVisible()){
-			    		internalFrame.setOpaque(true);
-			    		internalFrame.setSize(desktop.getWidth(), 200);
-			    		internalFrame.setVisible(true);
-			    		EditPanel.add(new JButton("Edit"));
-			    		EditPanel.add(new JButton("Remove"));
-			    	}
+			    	visiualizeLabelFrame();
 			    	
 			    	internalFrame.revalidate();
 			    	internalFrame.repaint();
@@ -431,6 +468,23 @@ public class ImageLabeller extends JFrame {
 		}
 	}
 	
+	public String getExtension(String filename) {
+		String[] nameParts = filename.split("\\.");
+		//file has no extension and is not a folder so refuse it
+		if (nameParts.length == 0) return "";
+		return nameParts[nameParts.length - 1];
+	}
+	
+	public void visiualizeLabelFrame() {
+		if (!internalFrame.isVisible()){
+    		internalFrame.setOpaque(true);
+    		internalFrame.setSize(desktop.getWidth(), 200);
+    		internalFrame.setVisible(true);
+    		EditPanel.add(new JButton("Edit"));
+    		EditPanel.add(new JButton("Remove"));
+    	}
+	}
+	
 	class CustomFileFilter extends FileFilter {
 		
 		private ArrayList<String> accepted_extensions = new ArrayList<String>();
@@ -439,10 +493,7 @@ public class ImageLabeller extends JFrame {
 		public boolean accept(File f) {
 			if (f.isDirectory()) return true;
 			String filename = f.getName();
-			String[] nameParts = filename.split("\\.");
-			//file has no extension and is not a folder so refuse it
-			if (nameParts.length == 0) return false;
-			String extension = nameParts[nameParts.length - 1];
+			String extension = getExtension(filename);
 			for (int i=0; i<accepted_extensions.size(); i++) {
 				if (extension.equals(accepted_extensions.get(i))) return true;
 			}

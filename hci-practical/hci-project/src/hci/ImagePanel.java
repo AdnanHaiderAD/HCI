@@ -140,6 +140,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
     public ArrayList<Point> get_currentPolygon(){
     	return currentPolygon;
     }
+    
 	/**
 	 * Displays the image
 	 * 
