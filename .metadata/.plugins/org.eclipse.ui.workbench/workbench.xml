@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="11" version="2.0">
+<workbench progressCount="54" version="2.0">
 <workbenchAdvisor/>
 <window height="878" width="1300" x="136" y="22">
 <fastViewData fastViewLocation="1024"/>
@@ -52,7 +52,7 @@
 </editor>
 <editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ImagePanel.java" partName="ImagePanel.java" path="/Users/Tanguero/Documents/MSC/HCI/HCI/hci-practical/hci-project/src/hci/ImagePanel.java" title="ImagePanel.java" tooltip="hci-project/src/hci/ImagePanel.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/hci-project/src/hci/ImagePanel.java"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2902" selectionTopPixel="1265"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2902" selectionTopPixel="2759"/>
 </editor>
 <editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Annotation.java" partName="Annotation.java" path="/Users/Tanguero/Documents/MSC/HCI/HCI/hci-practical/hci-project/src/hci/Annotation.java" title="Annotation.java" tooltip="hci-project/src/hci/Annotation.java" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/hci-project/src/hci/Annotation.java"/>
@@ -499,12 +499,6 @@
 <workbenchWindowAdvisor/>
 <actionBarAdvisor/>
 <trimLayout>
-<trimArea IMemento.internal.id="16384">
-<trimItem IMemento.internal.id="topLeft"/>
-</trimArea>
-<trimArea IMemento.internal.id="131072">
-<trimItem IMemento.internal.id="topRight"/>
-</trimArea>
 <trimArea IMemento.internal.id="128">
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
 </trimArea>
@@ -512,7 +506,6 @@
 <trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
 <trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
 <trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
-<trimItem IMemento.internal.id="bottomRight"/>
 </trimArea>
 </trimLayout>
 </window>
