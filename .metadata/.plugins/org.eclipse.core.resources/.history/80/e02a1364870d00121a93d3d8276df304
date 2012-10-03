@@ -6,12 +6,9 @@ import java.awt.BorderLayout;
 
 
 
-import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 //import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -45,12 +42,6 @@ public class Annotation {
 		//annotatepanel.add(field);
 	    JInternalFrame internalFrame = new JInternalFrame("Internal Frame", true,true,true);
 	    		internalFrame.setBounds(50, 50, 200, 100);
-	    		JPanel panel = new JPanel();
-	    		JScrollPane scrollpane = new JScrollPane(panel);
-	    		scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-	    		scrollpane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-	    		internalFrame.getContentPane().add(scrollpane, BorderLayout.CENTER);
-	    		internalFrame.getContentPane().add(new JButton("Hello"), BorderLayout.SOUTH);
 	    		desktop.add(internalFrame);
 	    		internalFrame.setVisible(true);
 	    		

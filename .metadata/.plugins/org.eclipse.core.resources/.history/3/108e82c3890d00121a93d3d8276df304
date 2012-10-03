@@ -259,9 +259,6 @@ public class ImageLabeller extends JFrame {
 			// @Override
 			public void actionPerformed(ActionEvent e) {
 			    	
-					if (imagePanel.get_currentPolygon()==null){
-						return;
-					}
 			    	// create a dialogue to ask the user for an annotation
 			    	JFrame dialogue_frame = new JFrame();
 			    	String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);

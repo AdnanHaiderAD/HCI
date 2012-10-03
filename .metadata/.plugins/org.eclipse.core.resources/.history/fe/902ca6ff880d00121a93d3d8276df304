@@ -30,9 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.filechooser.FileFilter;
 
 import java.util.Hashtable;
@@ -64,7 +62,6 @@ public class ImageLabeller extends JFrame {
 	JDesktopPane desktop =null;
 	JInternalFrame  internalFrame=null;
 	JPanel LabelPanel = null;
-	JPanel EditPanel =null;
 	 
 	 /*Table of labels*/
 	 Hashtable<String,JLabel> label_lookup= new Hashtable<String,JLabel>();
@@ -210,18 +207,9 @@ public class ImageLabeller extends JFrame {
         
         LabelPanel = new JPanel();// this ensures the new labels are stacked vertically.
         LabelPanel.setLayout(new BoxLayout(LabelPanel,BoxLayout.Y_AXIS));
-        JScrollPane scroller = new JScrollPane(LabelPanel);
-        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        
-        internalFrame.getContentPane().add(scroller);
-       
-        
-        EditPanel = new JPanel();//this contains the edit and remove buttons
-        EditPanel.setLayout(new BoxLayout(EditPanel, BoxLayout.X_AXIS));
-        internalFrame.getContentPane().add(EditPanel,BorderLayout.SOUTH);
-        
+        internalFrame.getContentPane().add(LabelPanel);
         desktop.add(internalFrame);
+        
 
         //Add button to the toolbox
 		JButton newPolyButton = new JButton("Create new object");
@@ -259,9 +247,6 @@ public class ImageLabeller extends JFrame {
 			// @Override
 			public void actionPerformed(ActionEvent e) {
 			    	
-					if (imagePanel.get_currentPolygon()==null){
-						return;
-					}
 			    	// create a dialogue to ask the user for an annotation
 			    	JFrame dialogue_frame = new JFrame();
 			    	String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
@@ -273,10 +258,7 @@ public class ImageLabeller extends JFrame {
 			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
 			    	if (!internalFrame.isVisible()){
 			    		internalFrame.setOpaque(true);
-			    		internalFrame.setSize(desktop.getWidth(), 200);
 			    		internalFrame.setVisible(true);
-			    		EditPanel.add(new JButton("Edit"));
-			    		EditPanel.add(new JButton("Remove"));
 			    	}
 			    	
 			    	internalFrame.revalidate();
