@@ -1,15 +1,7 @@
 package hci;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -21,19 +13,31 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 
-import java.util.Hashtable;
+import hci.utils.Point;
 
 
 /**
@@ -94,9 +98,6 @@ public class ImageLabeller extends JFrame {
 			public void windowClosing(WindowEvent event) {
 				// here we exit the program (maybe we should ask if the user
 				// really wants to do it?)
-				// maybe we also want to store the polygons somewhere? and read
-				// them next time
-
 				CloseApp_query.closeapp_query(); // asks whether the user really
 													// want to exit the app;
 			}
@@ -106,33 +107,37 @@ public class ImageLabeller extends JFrame {
 		JMenuBar menubar = new JMenuBar();
 		this.setJMenuBar(menubar);
 		menubar.setVisible(true);
+		
 		JMenu filemenu = new JMenu("File");
+		filemenu.setVisible(true);
 		menubar.add(filemenu);
 		filemenu.add(new JSeparator());
-		JMenuItem fileItem1 = new JMenuItem("Open File");
-		JMenuItem fileItem2 = new JMenuItem("Save");
-		JMenuItem fileItem3 = new JMenuItem("Close");
-		fileItem3.add(new JSeparator());
+		JMenuItem fileItem1 = new JMenuItem("Load New Image");
+		JMenuItem fileItem2 = new JMenuItem("Open Project");
+		JMenuItem fileItem3 = new JMenuItem("Save Project");
+		JMenuItem fileItem4 = new JMenuItem("Close");
+		fileItem2.add(new JSeparator());
+		fileItem4.add(new JSeparator());
 		filemenu.add(fileItem1);
 		filemenu.add(fileItem2);
 		filemenu.add(fileItem3);
+		filemenu.add(fileItem4);
+		fileItem1.setAccelerator(KeyStroke.getKeyStroke('I', CTRL_DOWN_MASK));
+		fileItem2.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_DOWN_MASK));
+		fileItem3.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_DOWN_MASK));
+		fileItem4.setAccelerator(KeyStroke.getKeyStroke('Q', CTRL_DOWN_MASK));
+		
 		JMenu editmenu = new JMenu("Edit");
+		editmenu.setVisible(true);
 		menubar.add(editmenu);
 		editmenu.add(new JSeparator());
 		JMenuItem editItem1 = new JMenuItem("Undo");
 		JMenuItem editItem2 = new JMenuItem("Redo");
-		JMenuItem editItem3 = new JMenuItem("Cut");
+		JMenuItem editItem3 = new JMenuItem("Preferences");
 		editItem3.add(new JSeparator());
-		JMenuItem editItem4 = new JMenuItem("Copy");
-		JMenuItem editItem5 = new JMenuItem("Paste");
-		JMenuItem editItem6 = new JMenuItem("Preferences");
-		editItem6.add(new JSeparator());
 		editmenu.add(editItem1);
 		editmenu.add(editItem2);
 		editmenu.add(editItem3);
-		editmenu.add(editItem4);
-		editmenu.add(editItem5);
-		editmenu.add(editItem6);
 		
 		//create the action listeners for the menu items
 		
@@ -140,7 +145,10 @@ public class ImageLabeller extends JFrame {
 		fileItem1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
-			    chooser.setFileFilter(new FileImageFilter());
+				CustomFileFilter filter = new CustomFileFilter("Images(.jpg, .png)");
+				filter.addExtension("jpg");
+				filter.addExtension("png");
+			    chooser.setFileFilter(filter);
 				int rVal = chooser.showOpenDialog(imagePanel);
 				if(rVal == JFileChooser.APPROVE_OPTION) {
 					try {
@@ -157,19 +165,68 @@ public class ImageLabeller extends JFrame {
 			}
 		});
 		
-		//save
-		fileItem1.addActionListener(new ActionListener() {
+		//open project
+		fileItem2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser();
+				CustomFileFilter filter = new CustomFileFilter("HCI projects (.ser)");
+				filter.addExtension("ser");
+			    chooser.setFileFilter(filter);
+				int rVal = chooser.showOpenDialog(imagePanel);
+				if(rVal == JFileChooser.APPROVE_OPTION) {
+					try
+			         {
+			            FileInputStream fileIn =
+			                          new FileInputStream(chooser.getSelectedFile());
+			            ObjectInputStream in = new ObjectInputStream(fileIn);
+			            imagePanel.loadProject((SerializableImage) in.readObject(), (Hashtable<String, ArrayList<Point>>) in.readObject(), (ArrayList<Point>) in.readObject());
+			            in.close();
+			            fileIn.close();
+			        }catch(IOException i)
+			        {
+			            i.printStackTrace();
+			            return;
+			        }catch(ClassNotFoundException c)
+			        {
+			            System.out.println("The project cannot be opened");
+			            c.printStackTrace();
+			            return;
+			        } catch (Exception e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		//save
+		fileItem3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				CustomFileFilter filter = new CustomFileFilter("HCI projects (.ser)");
+				filter.addExtension("ser");
+			    chooser.setFileFilter(filter);
 				int rVal = chooser.showSaveDialog(imagePanel);
 				if(rVal == JFileChooser.APPROVE_OPTION) {
-					//TODO: implement saving
+					try
+				      {
+				         FileOutputStream fileOut = new FileOutputStream(chooser.getSelectedFile());
+				         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				         out.writeObject(imagePanel.getSerializableImage());
+				         out.writeObject(imagePanel.getPolygonTable());
+				         out.writeObject(imagePanel.getCurrentPolygon());
+				         out.close();
+				         fileOut.close();
+				      }catch(IOException i)
+				      {
+				          i.printStackTrace();
+				      }
 				}
 			}
 		});
 
 		//close
-		fileItem3.addActionListener(new ActionListener() {
+		fileItem4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CloseApp_query.closeapp_query();
 			}
@@ -354,7 +411,11 @@ public class ImageLabeller extends JFrame {
 		}
 	}
 	
-	class FileImageFilter extends FileFilter {
+	class CustomFileFilter extends FileFilter {
+		
+		private ArrayList<String> accepted_extensions = new ArrayList<String>();
+		private String name;
+		
 		public boolean accept(File f) {
 			if (f.isDirectory()) return true;
 			String filename = f.getName();
@@ -362,12 +423,23 @@ public class ImageLabeller extends JFrame {
 			//file has no extension and is not a folder so refuse it
 			if (nameParts.length == 0) return false;
 			String extension = nameParts[nameParts.length - 1];
-			if (extension.equals("jpg") || extension.equals("png")) return true;
-			else return false;
+			for (int i=0; i<accepted_extensions.size(); i++) {
+				if (extension.equals(accepted_extensions.get(i))) return true;
+			}
+			return false;
+		}
+		
+		public CustomFileFilter(String name) {
+			super();
+			this.name = name;
 		}
 
 		public String getDescription() {
-			return null;
+			return name;
+		}
+		
+		public void addExtension(String ext) {
+			accepted_extensions.add(ext);
 		}
 	}
 }

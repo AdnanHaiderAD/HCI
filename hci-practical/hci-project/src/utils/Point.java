@@ -5,7 +5,12 @@ package utils;
  * @author Michal
  *
  */
-public class Point {
+
+
+public class Point implements java.io.Serializable {
+	
+	static final long serialVersionUID = 0x17E300AFA13BE7L;
+	
 	private int x = 0;
 	private int y = 0;
 	

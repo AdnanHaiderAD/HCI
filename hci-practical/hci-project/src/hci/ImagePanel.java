@@ -23,7 +23,7 @@ import hci.utils.*;
  * @author Michal
  *
  */
-public class ImagePanel extends JPanel implements MouseListener {
+public class ImagePanel extends JPanel implements MouseListener{
 	/**
 	 * some java stuff to get rid of warnings
 	 */
@@ -86,7 +86,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 	
 	public void changePicture(String imageName) throws Exception {
 		
-		image = ImageIO.read(new File(imageName));
+		image =  ImageIO.read(new File(imageName));
 		if (image.getWidth() > 800 || image.getHeight() > 600) {
 			int newWidth = image.getWidth() > 800 ? 800 : (image.getWidth() * 600)/image.getHeight();
 			int newHeight = image.getHeight() > 600 ? 600 : (image.getHeight() * 800)/image.getWidth();
@@ -101,6 +101,38 @@ public class ImagePanel extends JPanel implements MouseListener {
 		repaint();
 	}
 	
+public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Point>> polygons, ArrayList<Point> polygon) throws Exception {
+		
+		this.image = new BufferedImage(image.getWidth(), image.getHeight(), image.getImageType());
+		for (int i = 0; i<image.getWidth(); i++) {
+			for (int j = 0; j<image.getHeight(); j++) {
+				this.image.setRGB(i, j, image.getPixels()[i][j]);;
+			}
+		}
+		currentPolygon = polygon;
+		polygontable = polygons;
+		revalidate();
+		repaint();
+	}
+
+	public Hashtable<String, ArrayList<Point>> getPolygonTable() {
+		return polygontable;
+	}
+	
+	public ArrayList<Point> getCurrentPolygon() {
+		return currentPolygon;
+	}
+	
+	public SerializableImage getSerializableImage() {
+		int[][] pixels = new int[image.getWidth()][image.getHeight()];
+		for (int i = 0; i<pixels.length; i++) {
+			for (int j = 0; j<pixels[i].length; j++) {
+				pixels[i][j] = image.getRGB(i, j);
+			}
+		}
+		return new SerializableImage(image.getWidth(), image.getHeight(), image.getType(), pixels);
+	}
+	
     public void createPolygon(){
     	currentPolygon = new ArrayList<Point>();
     }
@@ -112,7 +144,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 	 * Displays the image
 	 * 
 	 */
-	public void ShowImage() {
+    public void ShowImage() {
 		Graphics g = this.getGraphics();
 		
 		if (image != null) {
