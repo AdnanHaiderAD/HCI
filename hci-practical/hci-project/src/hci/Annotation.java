@@ -1,6 +1,7 @@
 package hci;
 
 import java.awt.BorderLayout;
+import java.io.File;
 //import java.awt.event.ActionEvent;
 //import java.awt.event.ActionListener;
 
@@ -8,6 +9,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
@@ -53,7 +55,17 @@ public class Annotation {
 	    		internalFrame.getContentPane().add(new JButton("Hello"), BorderLayout.SOUTH);
 	    		desktop.add(internalFrame);
 	    		internalFrame.setVisible(true);
-	    		
+	    		JFileChooser file = new JFileChooser();
+	    		file.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+	    		int v= file.showOpenDialog(frame);
+	    		System.out.println(file.getSelectedFile().getPath() );
+	    		if (v== JFileChooser.APPROVE_OPTION){
+	    			File doc = file.getSelectedFile();
+	    			System.out.println(doc.getPath());
+	    			if (doc.exists()){
+	    				System.out.println(doc.getPath());
+	    			}
+	    		}
 	    		frame.setVisible(true);
 		
 	}

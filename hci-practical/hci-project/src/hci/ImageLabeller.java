@@ -111,23 +111,26 @@ public class ImageLabeller extends JFrame {
 
 		//create the menu bar
 		JMenuBar menubar = new JMenuBar();
-		this.setJMenuBar(menubar);
-		menubar.setVisible(true);
+		
+		
 		
 		//file menu
 		JMenu filemenu = new JMenu("File");
-		filemenu.setVisible(true);
+		filemenu.setMnemonic(KeyEvent.VK_1);
 		menubar.add(filemenu);
 		filemenu.add(new JSeparator());
+		
 		JMenuItem fileItem1 = new JMenuItem("Load New Image");
 		JMenuItem fileItem2 = new JMenuItem("Open Project");
 		JMenuItem fileItem3 = new JMenuItem("Save Project");
 		JMenuItem fileItem4 = new JMenuItem("Close");
-		fileItem2.add(new JSeparator());
-		fileItem4.add(new JSeparator());
+		//fileItem2.add(new JSeparator());
+		//fileItem4.add(new JSeparator());
 		filemenu.add(fileItem1);
+		filemenu.add(new JSeparator());
 		filemenu.add(fileItem2);
 		filemenu.add(fileItem3);
+		filemenu.add(new JSeparator());
 		filemenu.add(fileItem4);
 		fileItem1.setAccelerator(KeyStroke.getKeyStroke('I', CTRL_DOWN_MASK));
 		fileItem2.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_DOWN_MASK));
@@ -143,11 +146,16 @@ public class ImageLabeller extends JFrame {
 		JMenuItem editItem1 = new JMenuItem("Undo");
 		JMenuItem editItem2 = new JMenuItem("Redo");
 		JMenuItem editItem3 = new JMenuItem("Preferences");
-		editItem3.add(new JSeparator());
+	
 		editmenu.add(editItem1);
 		editmenu.add(editItem2);
+		editmenu.add(new JSeparator());
 		editmenu.add(editItem3);
 		
+		//add menubar to frame
+		this.setJMenuBar(menubar);
+		
+		//this.getContentPane().add(menubar,BorderLayout.NORTH);
 		//create the action listeners for the menu items
 		
 		//open file
@@ -157,12 +165,16 @@ public class ImageLabeller extends JFrame {
 				CustomFileFilter filter = new CustomFileFilter("Images(.jpg, .png)");
 				filter.addExtension("jpg");
 				filter.addExtension("png");
+				
 			    chooser.setFileFilter(filter);
 				int rVal = chooser.showOpenDialog(imagePanel);
 				if(rVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						imagePanel.changePicture(chooser.getSelectedFile().getAbsolutePath());
 			            LabelPanel.removeAll();
+			            internalFrame.setVisible(false);
+			            internalFrame.revalidate();
+			            internalFrame.repaint();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -256,7 +268,14 @@ public class ImageLabeller extends JFrame {
 				      {
 						 File selectedFile = chooser.getSelectedFile();
 						 if (!getExtension(selectedFile.getName()).equals("ser")) {
-							 selectedFile = new File(selectedFile.getAbsolutePath().concat(".ser"));
+							 String filename;
+							 if (selectedFile.getAbsolutePath().contains(".")){
+								  filename= selectedFile.getAbsolutePath().substring(0, selectedFile.getAbsolutePath().indexOf(".")); 
+							 }
+							 else {
+								  filename = selectedFile.getAbsolutePath();
+							 }
+							 selectedFile = new File(filename.concat(".ser"));
 						 }
 				         FileOutputStream fileOut = new FileOutputStream(selectedFile);
 				         ObjectOutputStream out = new ObjectOutputStream(fileOut);
