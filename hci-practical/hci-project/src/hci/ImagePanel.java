@@ -38,6 +38,7 @@ public class ImagePanel extends JPanel implements MouseListener{
 	 * list of current polygon's vertices 
 	 */
 	private ArrayList<Point> currentPolygon = null;
+	ArrayList<Point> currentPolygon_cache =null;// cache holding a copy of current polygon
 	
 	/**
 	 * list of polygons
@@ -52,6 +53,7 @@ public class ImagePanel extends JPanel implements MouseListener{
 	 */
 	public ImagePanel() {
 		currentPolygon = new ArrayList<Point>();
+		currentPolygon_cache= new ArrayList<Point>();
 		polygontable = new Hashtable<String,ArrayList<Point>>();
 		//polygonsList = new ArrayList<ArrayList<Point>>();
 
@@ -96,6 +98,7 @@ public class ImagePanel extends JPanel implements MouseListener{
 			image.getGraphics().drawImage(scaledImage, 0, 0, this);
 		}
 		currentPolygon = new ArrayList<Point>();
+		currentPolygon_cache= new ArrayList<Point>();
 		polygontable = new Hashtable<String,ArrayList<Point>>();
 		revalidate();
 		repaint();
@@ -110,6 +113,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 			}
 		}
 		currentPolygon = polygon;
+		currentPolygon_cache= polygon;
 		polygontable = polygons;
 		revalidate();
 		repaint();
@@ -135,6 +139,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	
     public void createPolygon(){
     	currentPolygon = new ArrayList<Point>();
+    	currentPolygon_cache= new ArrayList<Point>();
     }
     
     public ArrayList<Point> get_currentPolygon(){
@@ -167,15 +172,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 			displayPolygon((String)e.nextElement(),Color.GREEN);
 		}
 		
-		//display all the completed polygons( this is michals code)
-		//for(ArrayList<Point> polygon : polygonsList) {
-			//drawPolygon(polygon);
-			//finishPolygon(polygon);
-	//	}
 		
-		//display current polygon
-		
-		//drawPolygon(currentPolygon);
 		
 	}
 	
@@ -228,12 +225,13 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	 */
 	public void addNewPolygon(String key) {
 		//finish the current polygon if any
-		if (currentPolygon != null ) {
+		
 			finishPolygon(currentPolygon,Color.GREEN);
 			polygontable.put(key,currentPolygon);
-		}
+		
 		
 		currentPolygon = null;
+		currentPolygon_cache= null;
 	}
 
 	//@Override
@@ -262,6 +260,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 				g.fillOval(x-5,y-5,10,10);
 			
 				currentPolygon.add(new Point(x,y));
+				currentPolygon_cache.add(new Point(x,y));
 				System.out.println(x + " " + y);
 			} 
 		}

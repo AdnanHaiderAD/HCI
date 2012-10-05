@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
@@ -79,7 +81,10 @@ public class ImageLabeller extends JFrame {
 	 * image panel - displays image and editing area
 	 */
 	 ImagePanel imagePanel = null;
-	
+	 
+	 /*create the undo and redo action objects*/
+	 UndoAction undo = new UndoAction("Undo","Undo previous step",new Integer(KeyEvent.VK_3));
+	 RedoAction redo = new RedoAction("redo","Redo previous step",new Integer(KeyEvent.VK_4));
 	/**
 	 * handles New Object button action
 	 */
@@ -114,14 +119,16 @@ public class ImageLabeller extends JFrame {
 		
 		
 		
+		
 		//file menu
 		JMenu filemenu = new JMenu("File");
+		filemenu.setOpaque(true);
 		filemenu.setMnemonic(KeyEvent.VK_1);
 		menubar.add(filemenu);
-		filemenu.add(new JSeparator());
+		
 		
 		JMenuItem fileItem1 = new JMenuItem("Load New Image");
-		JMenuItem fileItem2 = new JMenuItem("Open Project");
+		JMenuItem fileItem2 = new JMenuItem("Open Existing Project");
 		JMenuItem fileItem3 = new JMenuItem("Save Project");
 		JMenuItem fileItem4 = new JMenuItem("Close");
 		//fileItem2.add(new JSeparator());
@@ -140,22 +147,28 @@ public class ImageLabeller extends JFrame {
 		
 		//edit menu
 		JMenu editmenu = new JMenu("Edit");
-		editmenu.setVisible(true);
+		editmenu.setMnemonic(KeyEvent.VK_2);
 		menubar.add(editmenu);
-		editmenu.add(new JSeparator());
-		JMenuItem editItem1 = new JMenuItem("Undo");
-		JMenuItem editItem2 = new JMenuItem("Redo");
+		
+		//JMenuItem editItem1 = new JMenuItem("Undo");
+		//JMenuItem editItem2 = new JMenuItem("Redo");
+		//JMenuItem editItem3 = new JMenuItem("Preferences");
+		JMenuItem editItem1 = new JMenuItem();
+		editItem1.setAction(undo);
+		JMenuItem editItem2 = new JMenuItem();
+		editItem2.setAction(redo);
 		JMenuItem editItem3 = new JMenuItem("Preferences");
-	
+		
+		
 		editmenu.add(editItem1);
 		editmenu.add(editItem2);
 		editmenu.add(new JSeparator());
 		editmenu.add(editItem3);
 		
 		//add menubar to frame
-		this.setJMenuBar(menubar);
+		setJMenuBar(menubar);
 		
-		//this.getContentPane().add(menubar,BorderLayout.NORTH);
+		
 		//create the action listeners for the menu items
 		
 		//open file
@@ -304,7 +317,7 @@ public class ImageLabeller extends JFrame {
 		appPanel = new JPanel();
 		this.setLayout(new BoxLayout(appPanel, BoxLayout.X_AXIS));
 		this.setContentPane(appPanel);// this hold the images, image labels and
-										// the buttons
+									// the buttons
 	
 		
 		// Create and set up the image panel.
@@ -532,4 +545,48 @@ public class ImageLabeller extends JFrame {
 			accepted_extensions.add(ext);
 		}
 	}
-}
+	
+	class UndoAction extends AbstractAction{
+		public UndoAction(String text, String desc , Integer mnemonic){
+			super(text);
+			putValue(SHORT_DESCRIPTION,desc);
+			putValue(MNEMONIC_KEY, mnemonic);
+			
+			
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			
+			if (imagePanel.get_currentPolygon() != null){
+				ArrayList<Point> currentPolygon  = imagePanel.get_currentPolygon();
+				currentPolygon.remove(currentPolygon.size()-1);
+				imagePanel.paint(imagePanel.getGraphics());
+				imagePanel.drawPolygon(currentPolygon,Color.GREEN);
+				System.out.println("its being visited");
+			}
+			
+		}
+	}	
+		
+		class RedoAction extends AbstractAction{
+			public RedoAction(String text, String desc , Integer mnemonic){
+				super(text);
+				putValue(SHORT_DESCRIPTION,desc);
+				putValue(MNEMONIC_KEY, mnemonic);
+				
+				
+			}
+
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+				if (imagePanel.get_currentPolygon().size()!= imagePanel.currentPolygon_cache.size()){
+				  ArrayList<Point> currentPolygon  = imagePanel.get_currentPolygon();
+				  currentPolygon.add(imagePanel.currentPolygon_cache.get(currentPolygon.size()));
+				
+				  imagePanel.drawPolygon(currentPolygon, Color.GREEN);
+				}
+			}
+		}
+	}
+
