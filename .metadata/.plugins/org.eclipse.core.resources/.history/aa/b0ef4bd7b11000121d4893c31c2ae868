@@ -265,8 +265,6 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		
-		//the way the mouse events are handled depends on whether the remove, add or adjust button have been clicked
 		if (removePoint && (currentPolygon!=null)){
 			Point pt = new Point (x,y);
 			findIndex(currentPolygon,pt);

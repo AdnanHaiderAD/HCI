@@ -436,7 +436,7 @@ public class ImageLabeller extends JFrame {
         	
         });
         save.addActionListener(new ActionListener(){
-        //when the save button is clicked , the edited polygon is added referenced by the current label
+
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 			  imagePanel.addNewPolygon(currentLabel);
@@ -526,7 +526,6 @@ public class ImageLabeller extends JFrame {
 							if (edit_clicked){
 								imagePanel.setCurrentPolygon(imagePanel.getPolygonTable().get(((JLabel)e3.getSource()).getText()));
 								currentLabel = ((JLabel)e3.getSource()).getText();
-								//to highlight the edited polygon
 								imagePanel.RemovePolgon(currentLabel);
 								imagePanel.paint(imagePanel.getGraphics());
 								imagePanel.drawPolygon(imagePanel.get_currentPolygon(), Color.BLUE);

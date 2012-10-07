@@ -427,31 +427,6 @@ public class ImageLabeller extends JFrame {
 			}
         	
         });
-        remP.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				imagePanel.removePoint=true;
-			}
-        	
-        });
-        save.addActionListener(new ActionListener(){
-        //when the save button is clicked , the edited polygon is added referenced by the current label
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-			  imagePanel.addNewPolygon(currentLabel);
-			  currentLabel=null;
-			  Editor.setVisible(false);
-			  imagePanel.revalidate();
-			  imagePanel.paint(imagePanel.getGraphics());
-			  
-			   desktop.revalidate();
-			   desktop.repaint();
-			}
-        	
-        	
-        });
-        
        
         //adding the internal frames to the toolbox
         
@@ -526,12 +501,11 @@ public class ImageLabeller extends JFrame {
 							if (edit_clicked){
 								imagePanel.setCurrentPolygon(imagePanel.getPolygonTable().get(((JLabel)e3.getSource()).getText()));
 								currentLabel = ((JLabel)e3.getSource()).getText();
-								//to highlight the edited polygon
 								imagePanel.RemovePolgon(currentLabel);
 								imagePanel.paint(imagePanel.getGraphics());
 								imagePanel.drawPolygon(imagePanel.get_currentPolygon(), Color.BLUE);
 								imagePanel.finishPolygon(imagePanel.get_currentPolygon(), Color.BLUE);
-								imagePanel.addpoint=false;///no more points can be added just by clicking without pressing the Add Point Button
+								
 								
 								
 								Editor.setVisible(true);
@@ -573,7 +547,7 @@ public class ImageLabeller extends JFrame {
 						public void mouseExited(MouseEvent e2) {
 							// TODO Auto-generated method stub
 							String key = ((JLabel)e2.getSource()).getText();
-							//the effect of coloring green is removed from the label being currently edited
+							//the effect of coloring red is removed from the label being currently edited
 							if (!key.equals(currentLabel)){
 								imagePanel.displayPolygon(key, Color.GREEN);
 							}

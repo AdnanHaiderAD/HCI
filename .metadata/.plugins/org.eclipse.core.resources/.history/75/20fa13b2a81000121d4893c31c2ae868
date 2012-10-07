@@ -29,9 +29,7 @@ public class ImagePanel extends JPanel implements MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	boolean adjustPoint =false;
-	boolean addpoint=false;
-	boolean removePoint = false;
+	boolean removePoint =false;
 	int indexR=1000000;
 	
 	
@@ -62,7 +60,6 @@ public class ImagePanel extends JPanel implements MouseListener{
 		currentPolygon = new ArrayList<Point>();
 		currentPolygon_cache= new ArrayList<Point>();
 		polygontable = new Hashtable<String,ArrayList<Point>>();
-		this.addpoint=true;
 		//polygonsList = new ArrayList<ArrayList<Point>>();
 
 		this.setVisible(true);
@@ -252,54 +249,39 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 		currentPolygon = null;
 		currentPolygon_cache= null;
 	}
-	
-	public void findIndex(ArrayList<Point> polygon,Point pt){
-		for (Point p :currentPolygon){
-			if ((Math.abs(p.getX()-pt.getX())<5) && (Math.abs(p.getY()-pt.getY())<5)){
-				indexR= currentPolygon.indexOf(p);
-				
-				}
-			}
-	}
+
 	//@Override
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		
-		//the way the mouse events are handled depends on whether the remove, add or adjust button have been clicked
-		if (removePoint && (currentPolygon!=null)){
-			Point pt = new Point (x,y);
-			findIndex(currentPolygon,pt);
-			if (indexR < currentPolygon.size()){
-				currentPolygon.remove(indexR);
-				this.paint(this.getGraphics());
-				drawPolygon(currentPolygon, Color.BLUE);
-				finishPolygon(currentPolygon,Color.BLUE);
-				indexR=100000;
-			}
-			removePoint=false;
-		}	
-			else if (adjustPoint && (currentPolygon!=null)){
+		 if (removePoint && (currentPolygon!=null)){
 				System.out.println("touches here");
 				Point pt = new Point (x,y);
-				findIndex(currentPolygon,pt);
-				adjustPoint= false;
-				
-				
-		     } else if (indexR<currentPolygon.size() && (currentPolygon!=null)){
-			        Point pt = new Point (x,y);
-			        currentPolygon.remove(indexR);
+				for (Point p :currentPolygon){
+					if ((Math.abs(p.getX()-pt.getX())<5) && (Math.abs(p.getY()-pt.getY())<5)){
+						System.out.println("it visits here");
+						indexR= currentPolygon.indexOf(p);
+						
+					}
+				}
+				if (indexR<currentPolygon.size()){
 					currentPolygon.add(indexR, pt);
 					this.paint(this.getGraphics());
-					
+					System.out.println("repaint performed");
 					drawPolygon(currentPolygon, Color.BLUE);
-					finishPolygon(currentPolygon,Color.BLUE);
-					indexR=100000;
 				}
+				removePoint=false;
 				
-				
-			 else if (currentPolygon!=null && addpoint){
-			//check if the cursors with in image area
+			} else if (currentPolygon!=null){
+			
+			
+			    
+			
+			
+			
+			
+		    
+		//check if the cursors with in image area
 				if (x > image.getWidth() || y > image.getHeight()) {
 			//if not do nothing
 					System.out.println("image width is "+ image.getWidth());
