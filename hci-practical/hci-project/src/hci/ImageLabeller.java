@@ -5,6 +5,7 @@ import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,6 +60,10 @@ public class ImageLabeller extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
+	/* the current polygon being edited*/
+	String currentLabel=null;
+	
 	/**
 	 * main window panel
 	 */
@@ -83,11 +88,12 @@ public class ImageLabeller extends JFrame {
 	 ImagePanel imagePanel = null;
 	 
 	 /* handles the Edit button  and its event corresponding to the  internal frame  */
-	 JButton Edit = new JButton("Edit");
+	 JButton Edit = new JButton("Edit Polygon");
 	 private boolean edit_clicked = false;
 	 
 	 /*handles the remove button and its event*/
 	 JButton Remove = new JButton("Remove");
+	 private boolean remove_clicked =false;
 	
 	 /*create the undo and redo action objects*/
 	 UndoAction undo = new UndoAction("Undo","Undo previous step",new Integer(KeyEvent.VK_3));
@@ -97,12 +103,11 @@ public class ImageLabeller extends JFrame {
 	 /*Create Editor Frame*/
 	 JInternalFrame Editor = null;
 	 JPanel editPanel=null;
-	 JPanel  redo_undo = null;
-	 //buttons displayed on the editor panel
-	 JButton undo_B = new JButton();
-	 JButton redo_B = new JButton();
-	 JButton save_B = new JButton("Save");
-	 
+	//buttons in the Editor
+	 JButton addP = new JButton("Add a Point");
+	 JButton remP = new JButton("Remove a Point");
+	 JButton adjP = new JButton ("Adjust a Point");
+	 JButton save = new JButton ("Save");
 	 
 	 
 	 /**
@@ -382,9 +387,10 @@ public class ImageLabeller extends JFrame {
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
         internalFrame.getContentPane().add(optionsPanel,BorderLayout.SOUTH);
         
-        desktop.add(internalFrame);
+        
 
         //add listener to the edit button
+        Edit.setFont(new Font("Verenda", Font.LAYOUT_LEFT_TO_RIGHT, 9));
         Edit.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
@@ -392,26 +398,40 @@ public class ImageLabeller extends JFrame {
 			}
         	
         });
-        ///create the editorframe
-        Editor= new JInternalFrame("Editor", true,true,true);
-       // Editor.setBounds(internalFrame.getWidth()+desktop.getLocation().x+10, internalFrame.getHeight()+desktop.getLocation().y +10,200,100);
-        editPanel= new JPanel();
-        editPanel.setLayout(new BoxLayout(editPanel,BoxLayout.Y_AXIS));
+        
+        Remove.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				remove_clicked = true;
+			}
+        	
+        });
+        
+        ///creating the editor Panel
+        Editor = new JInternalFrame("Editing",true,true);
+        editPanel = new JPanel();
+        editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
+        editPanel.add(addP);
+        editPanel.add(remP);
+        editPanel.add(adjP);
+        editPanel.add(save);
         Editor.getContentPane().add(editPanel);
-        redo_undo = new JPanel();
-        redo_undo.setLayout(new BoxLayout(redo_undo, BoxLayout.Y_AXIS));
-        redo_undo.add(undo_B);
-        redo_undo.add(redo_B);
-        redo_undo.add(save_B);
-        Editor.getContentPane().add(redo_undo,BorderLayout.EAST);
         
-        desktop.add(Editor);
         
+        remP.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				imagePanel.removePoint=true;
+			}
+        	
+        });
        
+        //adding the internal frames to the toolbox
         
-        
-        
-        
+        desktop.add (Editor);
+        desktop.add(internalFrame);
         
         //Add button to the toolbox
 		JButton newPolyButton = new JButton("Create new object");
@@ -472,20 +492,46 @@ public class ImageLabeller extends JFrame {
 			    	((JLabel) label_lookup.get(label_msg)).addMouseListener(new MouseListener(){
 
 						public void mouseClicked(MouseEvent e3) {
+							if (edit_clicked && remove_clicked){
+								edit_clicked=false;
+								remove_clicked= false;
+								return;
+							}
+							
 							if (edit_clicked){
-								JLabel cachelabel = new JLabel(((JLabel)e3.getSource()).getText());
+								imagePanel.setCurrentPolygon(imagePanel.getPolygonTable().get(((JLabel)e3.getSource()).getText()));
+								currentLabel = ((JLabel)e3.getSource()).getText();
+								imagePanel.RemovePolgon(currentLabel);
+								imagePanel.paint(imagePanel.getGraphics());
+								imagePanel.drawPolygon(imagePanel.get_currentPolygon(), Color.BLUE);
+								imagePanel.finishPolygon(imagePanel.get_currentPolygon(), Color.BLUE);
 								
-								editPanel.add(cachelabel);
-								Editor.setOpaque(true);
-					    		Editor.setSize(desktop.getWidth(), 200);
-					    		imagePanel.setCurrentPolygon(imagePanel.getPolygonTable().get(cachelabel.getText()));
-					    		undo_B.setAction(undo);
-					    		redo_B.setAction(redo);
-					    		
+								
+								
 								Editor.setVisible(true);
+								Editor.pack();
 								
+								desktop.revalidate();
+								desktop.repaint();
+								
+								
+								
+								
+							} else if (remove_clicked){
+								int reval = JOptionPane.showConfirmDialog(Editor, "Do you really wish to remove this Polygon?", "Delete Polygon", JOptionPane.YES_NO_OPTION);
+								if (reval== JOptionPane.YES_OPTION){
+									label_lookup.remove(((JLabel)e3.getSource()).getText());
+									imagePanel.getPolygonTable().remove(((JLabel)e3.getSource()).getText());
+									LabelPanel.remove(((JLabel)e3.getSource()));
+									internalFrame.revalidate();
+									internalFrame.repaint();
+									imagePanel.paint(imagePanel.getGraphics());
+									
+								}
+								remove_clicked=false;
 								
 							}
+							
 							// TODO Auto-generated method stub
 							
 						}
@@ -500,7 +546,11 @@ public class ImageLabeller extends JFrame {
 						public void mouseExited(MouseEvent e2) {
 							// TODO Auto-generated method stub
 							String key = ((JLabel)e2.getSource()).getText();
-							imagePanel.displayPolygon(key, Color.GREEN);
+							//the effect of coloring red is removed from the label being currently edited
+							if (!key.equals(currentLabel)){
+								imagePanel.displayPolygon(key, Color.GREEN);
+							}
+							
 						}
 
 						public void mousePressed(MouseEvent arg0) {
@@ -600,6 +650,7 @@ public class ImageLabeller extends JFrame {
     		internalFrame.setVisible(true);
     		optionsPanel.add(Edit);
     		optionsPanel.add(Remove);
+    		
     	}
 	}
 	

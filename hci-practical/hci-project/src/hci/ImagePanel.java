@@ -29,6 +29,11 @@ public class ImagePanel extends JPanel implements MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 
+	boolean removePoint =false;
+	int indexR=1000000;
+	
+	
+	
 	/**
 	 * image to be tagged
 	 */
@@ -122,6 +127,9 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 
 	public Hashtable<String, ArrayList<Point>> getPolygonTable() {
 		return polygontable;
+	}
+	public void RemovePolgon(String key){
+		polygontable.remove(key);
 	}
 	
 	public ArrayList<Point> getCurrentPolygon() {
@@ -244,10 +252,16 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 
 	//@Override
 	public void mouseClicked(MouseEvent e) {
-		if (currentPolygon!=null){	
+		int x = e.getX();
+		int y = e.getY();
+		if (currentPolygon!=null){
 			
-			int x = e.getX();
-			int y = e.getY();
+			
+			
+			
+			
+			
+			
 		    
 		//check if the cursors with in image area
 				if (x > image.getWidth() || y > image.getHeight()) {
@@ -271,6 +285,23 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 				currentPolygon_cache.add(new Point(x,y));
 				System.out.println(x + " " + y);
 			} 
+		}
+		else if (removePoint && (currentPolygon!=null)){
+			Point pt = new Point (x,y);
+			for (Point p :currentPolygon){
+				if ((Math.abs(p.getX()-pt.getX())<5) && (Math.abs(p.getY()-pt.getY())<5)){
+					System.out.println("it visits here");
+					indexR= currentPolygon.indexOf(p);
+					
+				}
+			}
+			if (indexR<currentPolygon.size()){
+				currentPolygon.add(indexR, pt);
+				this.paint(this.getGraphics());
+				drawPolygon(currentPolygon, Color.BLUE);
+			}
+			removePoint=false;
+			
 		}
 	}
 
