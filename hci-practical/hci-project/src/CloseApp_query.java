@@ -12,6 +12,7 @@ public class CloseApp_query {
 	static JFrame frame;
 	public static void closeapp_query(){
 		frame = new JFrame();
+		frame.setLocation(600,600);
 		JLabel askuser = new JLabel("Do you really wish to quit?");
 		JButton yes = new JButton ("Yes");
 		JButton no = new JButton ("no");

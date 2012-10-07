@@ -113,7 +113,8 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 			}
 		}
 		currentPolygon = polygon;
-		currentPolygon_cache= polygon;
+		currentPolygon_cache= new ArrayList<Point>();
+		currentPolygon_cache.addAll(polygon);
 		polygontable = polygons;
 		revalidate();
 		repaint();
@@ -125,6 +126,12 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	
 	public ArrayList<Point> getCurrentPolygon() {
 		return currentPolygon;
+	}
+	public void setCurrentPolygon(ArrayList<Point> polygon){
+		currentPolygon= polygon;
+		
+		currentPolygon_cache=new ArrayList<Point>();
+		currentPolygon_cache.addAll(currentPolygon);
 	}
 	
 	public SerializableImage getSerializableImage() {
@@ -188,7 +195,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	 * @param polygon to be displayed
 	 */
 	public void drawPolygon(ArrayList<Point> polygon, Color color) {
-		System.out.println("current polygon has been drawn");
+		
 	
 		Graphics2D g = (Graphics2D)this.getGraphics();
 		g.setColor(color);
@@ -212,10 +219,11 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 		if (polygon.size() >= 3) {
 			Point firstVertex = polygon.get(0);
 			Point lastVertex = polygon.get(polygon.size() - 1);
-		
+		    
 			Graphics2D g = (Graphics2D)this.getGraphics();
 			g.setColor(color);
 			//g.setColor(Color.GREEN);
+			
 			g.drawLine(firstVertex.getX(), firstVertex.getY(), lastVertex.getX(), lastVertex.getY());
 		}
 	}
