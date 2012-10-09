@@ -121,7 +121,7 @@ public class ImageLabeller extends JFrame {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		imagePanel.paint(imagePanel.getGraphics()); // update image panel
+		imagePanel.paint(g); // update image panel
 	}
 
 	/**

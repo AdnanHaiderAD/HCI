@@ -1,0 +1,55 @@
+\documentclass[11pt]{amsart}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphic
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{Brief Article}
+\author{The Author}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+%\section{}
+%\subsection{}
+
+\section {User Requirements}
+\begin{itemize}
+\item  User friendly way of opening an image
+\item  User friendly way of editing, adding and deleting image labels and selecting corresponding imageareas
+\item  User friendly way of saving and loading the label set
+\item The interface is easy to use
+\item The interface allow fast processing of large number of images
+\end{itemize}
+
+\section {Obtaining data}
+The aim of this practical is to design  and implement  a more user friendly standalone application than the  currently existing Label Me tool  to produce annotated image databases.  Before defining the functional specification of our system, we first  analysed the existing system \(``Label Me ``\) to gain insights on what areas has the tool  been successful and on what areas has it failed to cope the usability requirements.
+
+Upon careful analysis, we have found the following usability problems associated with ``Label Me" tool:
+\begin{enumerate}
+\item  For each annotated polygon the tool provides a different color. Although this allows  the users to distinguish between landmarks, the use of different colors at times make it difficult  for a user to locate a particular landmark \textbf{instantly} when he/ she places his cursor on a particular label situated on the right side of the screen.
+\item It is not clear on first sight on how to undo a step or sequence of steps  when annotating a   landmark in the current image.  Renaming the \emph{ Erase} button to \emph{Undo} will definitely provide better navigation control for a first time  user. Plus, the user has no means to redo some of his previous steps
+\item One of the main disadvantages that we have found is that the tool does not provide any means for a user to save his work and  progress to a different image. The inability to move between different projects hence makes the tool less appealing to potential users.
+\item Another flaw that we encountered  during our analysis is in the use of the \emph{Zoom Buttons}. The user is not allowed to zoom any portion of the annotated image when he/she is in the process of creating a polygon. This restriction is totally redundant and only puts more unnecessary on how the user can interact with the tool.
+\item To edit a polygon, the user is required to click in a specific region inside the polygon. Since the region is not specified, needless time and effort has to be spent on locating this region. In addition, the tool does not provide any options to \textbf{ add new points} or \text{remove points} from an existing saved polygon.
+
+\end{enumerate}
+
+Apart from the cons , the ``Label Me "  provides a user with a range of functionalities :
+\begin {itemize}
+\item  It allows user to label particular landmarks in an image.
+\item  The landmarks are annotated with different colors, thus making it easily to differentiate between different landmarks.
+\item  As soon as a user puts  his cursor on a particular label, the polygon associated with the label is highlighted ,hence making it easy to identify that particular landmark.
+\item The editing tools provided by `Label Me " allows  the user to adjust the shape and location of the polygons.
+\end{itemize}
+
+
+
+
+
+
+\end{document}  
