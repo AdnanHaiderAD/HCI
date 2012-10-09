@@ -20,7 +20,7 @@ import hci.utils.*;
 
 /**
  * Handles image editing panel
- * @author Michal
+ * @authors Michal, Hristiana and Adnan
  *
  */
 public class ImagePanel extends JPanel implements MouseListener{
@@ -33,8 +33,6 @@ public class ImagePanel extends JPanel implements MouseListener{
 	boolean addpoint=false;
 	boolean removePoint = false;
 	int indexR=1000000;
-	
-	
 	
 	/**
 	 * image to be tagged
@@ -50,9 +48,6 @@ public class ImagePanel extends JPanel implements MouseListener{
 	/**
 	 * list of polygons
 	 */
-	/* Hash table is now used instead of the arraylist*/
-	//private ArrayList<ArrayList<Point>> polygonsList = null;
-	
 	private Hashtable<String,ArrayList<Point>> polygontable = null;
 	
 	/**
@@ -73,7 +68,7 @@ public class ImagePanel extends JPanel implements MouseListener{
 		this.setPreferredSize(panelSize);
 		this.setMaximumSize(panelSize);
 		
-		//addMouseListener(this);
+		addMouseListener(this);
 	}
 	
 	/**
@@ -140,7 +135,6 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	}
 	public void setCurrentPolygon(ArrayList<Point> polygon){
 		currentPolygon= polygon;
-		
 		currentPolygon_cache=new ArrayList<Point>();
 		currentPolygon_cache.addAll(currentPolygon);
 	}
@@ -164,25 +158,14 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
     	return currentPolygon;
     }
     
-	/**
-	 * Displays the image
-	 * 
-	 */
-    public void ShowImage() {
-		Graphics g = this.getGraphics();
-		
-		if (image != null) {
-			g.drawImage(
-					image, 0, 0, null);
-		}
-	}
-	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		
 		//display image
-		ShowImage();
+		if (image != null) {
+			g.drawImage(image, 0, 0, null);
+		}
 		
 		//display all the polygons  using information from the hashtable
 		Enumeration e = polygontable.keys();
@@ -190,13 +173,12 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 			displayPolygon((String)e.nextElement(),Color.GREEN);
 		}
 		
-		
-		
 	}
 	
 	//displays the polygon indexed by the key in the hash table
 	public void  displayPolygon(String key, Color color){
 		ArrayList<Point> polygon = (ArrayList<Point>)polygontable.get(key);
+		//TODO: here error is raised if a polygon with the specified name does not exist
 		drawPolygon(polygon,color);
 		finishPolygon(polygon, color);
 	}
@@ -207,10 +189,8 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 	 */
 	public void drawPolygon(ArrayList<Point> polygon, Color color) {
 		
-	
 		Graphics2D g = (Graphics2D)this.getGraphics();
 		g.setColor(color);
-		//g.setColor(Color.GREEN);
 		for(int i = 0; i < polygon.size(); i++) {
 			Point currentVertex = polygon.get(i);
 			if (i != 0) {
@@ -261,7 +241,7 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 				}
 			}
 	}
-	//@Override
+	
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
@@ -272,25 +252,26 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 			findIndex(currentPolygon,pt);
 			if (indexR < currentPolygon.size()){
 				currentPolygon.remove(indexR);
-				this.paint(this.getGraphics());
+				repaint();
 				drawPolygon(currentPolygon, Color.BLUE);
 				finishPolygon(currentPolygon,Color.BLUE);
 				indexR=100000;
 			}
 			removePoint=false;
 		}	
+		
 			else if (adjustPoint && (currentPolygon!=null)){
 				System.out.println("touches here");
 				Point pt = new Point (x,y);
 				findIndex(currentPolygon,pt);
 				adjustPoint= false;
 				
-				
+			//TODO: better way to do this?
 		     } else if (indexR<currentPolygon.size() && (currentPolygon!=null)){
 			        Point pt = new Point (x,y);
 			        currentPolygon.remove(indexR);
 					currentPolygon.add(indexR, pt);
-					this.paint(this.getGraphics());
+					repaint();
 					
 					drawPolygon(currentPolygon, Color.BLUE);
 					finishPolygon(currentPolygon,Color.BLUE);
@@ -325,19 +306,15 @@ public void loadProject(SerializableImage image, Hashtable<String, ArrayList<Poi
 		
 	}
 
-	//@Override
 	public void mouseEntered(MouseEvent arg0) {
 	}
 
-	//@Override
 	public void mouseExited(MouseEvent arg0) {
 	}
 
-   //	@Override
 	public void mousePressed(MouseEvent arg0) {
 	}
 
-	//@Override
 	public void mouseReleased(MouseEvent arg0) {
 	}
 	
