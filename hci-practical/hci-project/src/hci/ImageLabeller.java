@@ -1,16 +1,15 @@
 package hci;
 
 import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import hci.utils.Point;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,31 +20,30 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.Hashtable;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
-
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-
-import hci.utils.Point;
 
 
 /**
@@ -61,7 +59,6 @@ public class ImageLabeller extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	/* the current polygon being edited*/
-	String currentLabel=null;
 	
 	/**
 	 * main window panel
@@ -74,13 +71,15 @@ public class ImageLabeller extends JFrame {
 	JPanel toolboxPanel = null;
 	
 	/* containers to hold and display labels created by the user */
-	JDesktopPane desktop =null;
+	//TODO: why Desktop Pane? Looks movable but isn't
 	JInternalFrame  internalFrame=null;
-	JPanel LabelPanel = null;
+	JList LabelPanel = null;
+	JInternalFrame creationFrame= null;
 	JPanel optionsPanel =null;
+	JPanel creationPanel = null;
 	 
 	 /*Table of labels*/
-	 Hashtable<String,JLabel> label_lookup= new Hashtable<String,JLabel>();
+//	 	Hashtable<String,JLabel> label_lookup= new Hashtable<String,JLabel>();
 	
 	 /**
 	 * image panel - displays image and editing area
@@ -88,12 +87,11 @@ public class ImageLabeller extends JFrame {
 	 ImagePanel imagePanel = null;
 	 
 	 /* handles the Edit button  and its event corresponding to the  internal frame  */
-	 JButton Edit = new JButton("Edit Polygon");
-	 private boolean edit_clicked = false;
+	 JButton Edit = new JButton("Edit");
 	 
 	 /*handles the remove button and its event*/
 	 JButton Remove = new JButton("Remove");
-	 private boolean remove_clicked =false;
+//	 private boolean remove_clicked =false;
 	
 	 /*create the undo and redo action objects*/
 	 UndoAction undo = new UndoAction("Undo","Undo previous step",new Integer(KeyEvent.VK_3));
@@ -109,17 +107,10 @@ public class ImageLabeller extends JFrame {
 	 JButton adjP = new JButton ("Adjust a Point");
 	 JButton save = new JButton ("Save");
 	 
-	 
-	 /**
-	 * handles New Object button action
-	 */
-	public void addNewPolygon(String key) {
-		imagePanel.addNewPolygon(key);
-	}
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		imagePanel.repaint(); // update image panel
+		imagePanel.repaint(); // update image pane
 	}
 
 	/**
@@ -130,16 +121,13 @@ public class ImageLabeller extends JFrame {
 	 * @throws Exception
 	 */
 	public void setupGUI(String imageFilename) throws Exception {
+		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
-				// asks whether the user really
-				// want to exit the app;
+				// asks whether the user really want to exit the app;
 				String[] options = {"Yes","No"};
-			
 				int rep = JOptionPane.showOptionDialog(imagePanel, "Do you really wish to quit?", "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-				if (rep == JOptionPane.YES_OPTION){
-					System.exit(0);
-				}
+				if (rep == JOptionPane.YES_OPTION) System.exit(0);
 			}
 		});
 
@@ -176,13 +164,14 @@ public class ImageLabeller extends JFrame {
 		editItem1.setAction(undo);
 		JMenuItem editItem2 = new JMenuItem();
 		editItem2.setAction(redo);
-		//JMenuItem editItem3 = new JMenuItem("Preferences");
-		
+		JMenuItem editItem3 = new JMenuItem("Zoom in");
+		JMenuItem editItem4 = new JMenuItem("Zoom out");
 		
 		editmenu.add(editItem1);
 		editmenu.add(editItem2);
 		editmenu.add(new JSeparator());
-		//editmenu.add(editItem3);
+		editmenu.add(editItem3);
+		editmenu.add(editItem4);
 		
 		//add menubar to frame
 		setJMenuBar(menubar);
@@ -203,9 +192,6 @@ public class ImageLabeller extends JFrame {
 				if(rVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						imagePanel.changePicture(chooser.getSelectedFile().getAbsolutePath());
-			            LabelPanel.removeAll();
-			            //TODO: what?? isn't the right way to remove the things it's displaying and then redraw, not make it invisible
-			            internalFrame.setVisible(false);
 			            internalFrame.revalidate();
 			            internalFrame.repaint();
 					} catch (Exception e1) {
@@ -240,37 +226,10 @@ public class ImageLabeller extends JFrame {
 			            //remove everything in the label panel
 			            LabelPanel.removeAll();
 			            
-			            //put the new JLabels
-			            Enumeration en = imagePanel.getPolygonTable().keys();
-			    		while(en.hasMoreElements()){
-			    			
-			    			String label = (String) en.nextElement();
-			            	label_lookup.put(label, new JLabel(label) );
-			            	((JLabel) label_lookup.get(label)).setForeground(Color.red);
-			            	LabelPanel.add((JLabel) label_lookup.get(label));
-			            	((JLabel) label_lookup.get(label)).addMouseListener(new MouseListener(){
-
-								public void mouseEntered(MouseEvent e) {
-									String key = ((JLabel)e.getSource()).getText();
-									imagePanel.displayPolygon(key, Color.red);
-								}
-
-								public void mouseExited(MouseEvent e2) {
-									String key = ((JLabel)e2.getSource()).getText();
-									imagePanel.displayPolygon(key, Color.GREEN);
-								}
-								
-								public void mouseClicked(MouseEvent arg0) {
-								}
-								public void mousePressed(MouseEvent arg0) {
-								}
-								public void mouseReleased(MouseEvent arg0) {
-								}
-					    	});
-			            	
-			            	visiualizeLabelFrame();
-			            	
-			            }
+//			            //put the new JLabels
+			            
+			            ArrayList<String> list = Collections.list(imagePanel.getPolygonTable().keys());
+				    	LabelPanel.setListData(list.toArray(new String[list.size()]));
 			            
 			        } catch (Exception e2) {
 						e2.printStackTrace();
@@ -318,13 +277,24 @@ public class ImageLabeller extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String[] options = {"Yes","No"};
 				int rep = JOptionPane.showOptionDialog(imagePanel, "Do you really wish to quit?", "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-				if (rep == JOptionPane.YES_OPTION){
-					System.exit(0);
-				}
+				if (rep == JOptionPane.YES_OPTION) System.exit(0);
 			}
 		});
 		
-	
+		editItem3.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				imagePanel.scale(1.6);
+			}
+		});
+		
+		editItem4.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				imagePanel.scale(0.625);
+			}
+		});
+		
 		// setup main window panel
 		appPanel = new JPanel();
 		this.setLayout(new BoxLayout(appPanel, BoxLayout.X_AXIS));
@@ -334,31 +304,54 @@ public class ImageLabeller extends JFrame {
 		// Create and set up the image panel.
 		imagePanel = new ImagePanel(imageFilename);
 		imagePanel.setOpaque(true); //content panes must be opaque
-		
-        appPanel.add(imagePanel);
 
         //create toolbox panel
         toolboxPanel = new JPanel();
         toolboxPanel.setLayout(new BoxLayout(toolboxPanel, BoxLayout.Y_AXIS));
         
-        ///create destopPane to the frame that displays list of labels
-        desktop = new JDesktopPane();
-        desktop.setOpaque(false);
-        desktop.setLayout(new BoxLayout(desktop, BoxLayout.Y_AXIS));
-        toolboxPanel.add(desktop);
+        creationFrame = new JInternalFrame("Creation Panel", false, false, false);
+        creationFrame.setVisible(true);
+        creationPanel = new JPanel();
+        creationPanel.setLayout(new BoxLayout(creationPanel, BoxLayout.Y_AXIS));
+        creationFrame.add(creationPanel);
         
         //create internal frame to hold the list of labels
-        internalFrame = new JInternalFrame("List of Labels", true,true,true);
-        int loc_x = desktop.getLocation().x;
-        int loc_y = desktop.getLocation().y;
-        internalFrame.setBounds(loc_x, loc_y, 200, 100);
+        internalFrame = new JInternalFrame("List of Labels", false,false,false);
+        internalFrame.setOpaque(true);
+		internalFrame.setPreferredSize(new Dimension(toolboxPanel.getWidth(), 200));
+		internalFrame.setVisible(true);
        
+        for(MouseListener listener : ((javax.swing.plaf.basic.BasicInternalFrameUI) this.internalFrame.getUI()).getNorthPane().getMouseListeners()){
+        	((javax.swing.plaf.basic.BasicInternalFrameUI) this.internalFrame.getUI()).getNorthPane().removeMouseListener(listener);
+        	}
         
-        LabelPanel = new JPanel();// this ensures the new labels are stacked vertically.
-        LabelPanel.setLayout(new BoxLayout(LabelPanel,BoxLayout.Y_AXIS));
+        LabelPanel = new JList();// this ensures the new labels are stacked vertically.
+        LabelPanel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        LabelPanel.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent event) {
+				if( event.getSource() == LabelPanel	&& !event.getValueIsAdjusting() ) {
+					if (LabelPanel.getSelectedValue()==null) {
+						Edit.setEnabled(false);
+						Remove.setEnabled(false);
+						return;
+					}
+					Edit.setEnabled(true);
+					Remove.setEnabled(true);
+					String label = (String) LabelPanel.getSelectedValue();
+					if (label != null) imagePanel.setSelectedPolygon(label);
+					else imagePanel.setSelectedPolygon(null);
+					imagePanel.repaint();
+				}
+			}
+        });
         JScrollPane scroller = new JScrollPane(LabelPanel);
-        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        JScrollPane imageScroller = new JScrollPane(imagePanel);
+        imageScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        imageScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        appPanel.add(imageScroller);
         
         internalFrame.getContentPane().add(scroller);
        
@@ -367,24 +360,78 @@ public class ImageLabeller extends JFrame {
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
         internalFrame.getContentPane().add(optionsPanel,BorderLayout.SOUTH);
         
-        
-
         //add listener to the edit button
-        Edit.setFont(new Font("Verenda", Font.LAYOUT_LEFT_TO_RIGHT, 9));
         Edit.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				edit_clicked=true;	
+				if (LabelPanel.getSelectedValue() == null) return;
+				if (imagePanel.getCurrentPolygon()!= null) {
+					int reval = JOptionPane.showConfirmDialog(Editor, "If you got to Edit mode now, you will lose the current usaved polygon you are creating. Do you want to save this polygon now?", "Save unsaved polygon?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (reval == JOptionPane.CANCEL_OPTION) return;
+					if (reval == JOptionPane.YES_OPTION) {
+						JFrame dialogue_frame = new JFrame();
+						String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
+				    	//TODO: if the label is duplicate what do we want to do
+						if (label_msg == null){
+				    		//TODO: don't we want to say Error, please provide a name instead of just deleting the person's polygon?
+				    		return;
+				    	}
+						imagePanel.finalizePolygon(label_msg);
+					}
+				}
+				ArrayList<Point> to_edit = imagePanel.getPolygonTable().get((String)LabelPanel.getSelectedValue());
+				imagePanel.removePolygon((String)LabelPanel.getSelectedValue());
+				imagePanel.setCurrentPolygon(to_edit);
+				imagePanel.repaint();
+				imagePanel.currentLabel = (String) LabelPanel.getSelectedValue();
+				
+				Editor.setVisible(true);
+				internalFrame.setVisible(false);
+				optionsPanel.setVisible(false);
+				creationFrame.setVisible(false);
+				
+				Editor.pack();
+					
+				toolboxPanel.revalidate();
+				toolboxPanel.repaint();
+				
 			}
         });
         
         Remove.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				remove_clicked = true;
+				if (LabelPanel.getSelectedValue() ==null) return;
+				int reval = JOptionPane.showConfirmDialog(Editor, "Do you really wish to remove this Polygon?", "Delete Polygon", JOptionPane.YES_NO_OPTION);
+				if (reval== JOptionPane.YES_OPTION){
+					System.out.print((String)LabelPanel.getSelectedValue());
+					imagePanel.removePolygon((String)LabelPanel.getSelectedValue());
+					//update the LabelPanel
+					ArrayList<String> list = Collections.list(imagePanel.getPolygonTable().keys());
+				    LabelPanel.setListData(list.toArray(new String[list.size()]));
+				    
+				    if (LabelPanel.getSelectedValue()!= null) 
+				    	imagePanel.setSelectedPolygon((String)LabelPanel.getSelectedValue());
+				    
+					internalFrame.revalidate();
+					internalFrame.repaint();
+					imagePanel.revalidate();
+					imagePanel.repaint();
+					LabelPanel.revalidate();
+					LabelPanel.repaint();
+					
+				}
 			}
         });
         
+        Edit.setEnabled(false);
+        Remove.setEnabled(false);
+		optionsPanel.add(Edit);
+		optionsPanel.add(Remove);
+        
         ///creating the editor Panel
-        Editor = new JInternalFrame("Editing",true,true);
+        Editor = new JInternalFrame("Editing",false,false, false);
+        for(MouseListener listener : ((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().getMouseListeners())
+        	((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().removeMouseListener(listener);
+        
         editPanel = new JPanel();
         editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
         editPanel.add(addP);
@@ -397,13 +444,26 @@ public class ImageLabeller extends JFrame {
         adjP.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				imagePanel.stopEditing();
 				imagePanel.adjustPoint=true;
 			}
-        	
         });
+        
+        addP.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				imagePanel.stopEditing();
+				imagePanel.addpoint=true;
+				imagePanel.repaint();
+			}
+        });
+
         remP.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
+				//stopp al preious editing
+				imagePanel.stopEditing();
+				//and allow the removing of points
 				imagePanel.removePoint=true;
 			}
         	
@@ -411,14 +471,25 @@ public class ImageLabeller extends JFrame {
         save.addActionListener(new ActionListener(){
         //when the save button is clicked , the edited polygon is added referenced by the current label
 			public void actionPerformed(ActionEvent arg0) {
-			  imagePanel.addNewPolygon(currentLabel);
-			  currentLabel=null;
+				
+			  imagePanel.stopEditing();
+			  
+			  imagePanel.finalizePolygon(imagePanel.currentLabel);
+			  String label = (String) LabelPanel.getSelectedValue();
+			  if (label != null) imagePanel.setSelectedPolygon(label);
+			  else imagePanel.setSelectedPolygon(null);
+			  imagePanel.repaint();
+			  imagePanel.currentLabel=null;
 			  Editor.setVisible(false);
+			  
+			  internalFrame.setVisible(true);
+			  optionsPanel.setVisible(true);
+			  creationFrame.setVisible(true);
 			  imagePanel.revalidate();
 			  imagePanel.repaint();
 			  
-			  desktop.revalidate();
-			  desktop.repaint();
+			  toolboxPanel.revalidate();
+			  toolboxPanel.repaint();
 			}
         	
         	
@@ -426,8 +497,10 @@ public class ImageLabeller extends JFrame {
         
         //adding the internal frames to the toolbox
         
-        desktop.add (Editor);
-        desktop.add(internalFrame);
+		
+        toolboxPanel.add (Editor);
+        toolboxPanel.add(internalFrame);
+        toolboxPanel.add(creationFrame);
         
         //Add button to the toolbox
 		JButton newPolyButton = new JButton("Create new object");
@@ -437,29 +510,30 @@ public class ImageLabeller extends JFrame {
 		newPolyButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-
-				/*if the create button was pressed before the finish button , the existing polygon is removed */
-				    if (imagePanel.get_currentPolygon()!=null){
-				    	imagePanel.revalidate();
-				    	imagePanel.repaint();
-				    	
-				    }
-				    
-				//if (imagePanel.getMouseListeners().length ==0){ 
-				//	//TODO: why do we add it here? also, if we want it to exist only when in CREATE mode, do we remove it when we press finish?
-				//	imagePanel.addMouseListener(imagePanel);
-				//    
-				//}
-
-				imagePanel.createPolygon();
+				if (imagePanel.getCurrentPolygon()!= null && imagePanel.getCurrentPolygon().size()>0) {
+					int reval = JOptionPane.showConfirmDialog(Editor, "If you got to Edit mode now, you will lose the current usaved polygon you are creating. Do you want to save this polygon now?", "Save unsaved polygon?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (reval == JOptionPane.CANCEL_OPTION) return;
+					if (reval == JOptionPane.YES_OPTION) {
+						JFrame dialogue_frame = new JFrame();
+						String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
+				    	//TODO: if the label is duplicate what do we want to do
+						if (label_msg == null){
+				    		//TODO: don't we want to say Error, please provide a name instead of just deleting the person's polygon?
+				    		return;
+				    	}
+						imagePanel.finalizePolygon(label_msg);
+					}
+				}
+				imagePanel.addpoint = true;
+				imagePanel.setCurrentPolygon(new ArrayList<Point>());
 				imagePanel.revalidate();
 				imagePanel.repaint();
 			}
 		});
-		newPolyButton.setToolTipText("Click to add new object");
-		toolboxPanel.add(newPolyButton);
+		newPolyButton.setToolTipText("Click to add new annotation object");
+		creationPanel.add(newPolyButton);
 
-		JButton closeButton = new JButton("Finish");
+		JButton closeButton = new JButton("Save object");
 		closeButton.setMnemonic(KeyEvent.VK_F);
 		closeButton.setSize(50, 20);
 		closeButton.setEnabled(true);
@@ -467,9 +541,11 @@ public class ImageLabeller extends JFrame {
 			
 			public void actionPerformed(ActionEvent e) {
 			    	
-					if (imagePanel.get_currentPolygon()==null){
+					if (imagePanel.getCurrentPolygon()==null){
+				        JOptionPane.showMessageDialog(Editor, "You haven't created a polygon to save. Please click on Create new Polygon first and then add points by clicking on the image");
 						return;
 					}
+					
 			    	// create a dialogue to ask the user for an annotation
 			    	JFrame dialogue_frame = new JFrame();
 			    	String label_msg = (String) JOptionPane.showInputDialog(dialogue_frame, "Please type in your prefered Label", "Annotator", JOptionPane.OK_OPTION, null, null, null);
@@ -477,94 +553,17 @@ public class ImageLabeller extends JFrame {
 			    		//TODO: don't we want to say Error, please provide a name instead of just deleting the person's polygon?
 			    		return;
 			    	}
-			    	addNewPolygon(label_msg);//create new polygon indexed by this string
-			    	
-			    	
-			        label_lookup.put(label_msg,new JLabel(label_msg) );
-			        ((JLabel) label_lookup.get(label_msg)).setForeground(Color.red);
-			    	LabelPanel.add((JLabel) label_lookup.get(label_msg));
-			    	visiualizeLabelFrame();
+			    	imagePanel.finalizePolygon(label_msg);//create new polygon indexed by this string
+			    	imagePanel.addpoint = false;
+			    	ArrayList<String> list = Collections.list(imagePanel.getPolygonTable().keys());
+			    	LabelPanel.setListData((list.toArray(new String[list.size()])));
 			    	
 			    	internalFrame.revalidate();
 			    	internalFrame.repaint();
-			    	
-			    	((JLabel) label_lookup.get(label_msg)).addMouseListener(new MouseListener(){
-
-						public void mouseClicked(MouseEvent e3) {
-							if (edit_clicked && remove_clicked){
-								edit_clicked=false;
-								remove_clicked= false;
-								return;
-							}
-							
-							if (edit_clicked){
-								imagePanel.setCurrentPolygon(imagePanel.getPolygonTable().get(((JLabel)e3.getSource()).getText()));
-								currentLabel = ((JLabel)e3.getSource()).getText();
-								//to highlight the edited polygon
-								imagePanel.RemovePolgon(currentLabel);
-								imagePanel.repaint();
-								imagePanel.drawPolygon(imagePanel.get_currentPolygon(), Color.BLUE);
-								imagePanel.finishPolygon(imagePanel.get_currentPolygon(), Color.BLUE);
-								imagePanel.addpoint=false;///no more points can be added just by clicking without pressing the Add Point Button
-								
-								
-								Editor.setVisible(true);
-							
-								Editor.pack();
-								
-								desktop.revalidate();
-								desktop.repaint();
-								
-								
-								
-								
-							} else if (remove_clicked){
-								int reval = JOptionPane.showConfirmDialog(Editor, "Do you really wish to remove this Polygon?", "Delete Polygon", JOptionPane.YES_NO_OPTION);
-								if (reval== JOptionPane.YES_OPTION){
-									label_lookup.remove(((JLabel)e3.getSource()).getText());
-									imagePanel.getPolygonTable().remove(((JLabel)e3.getSource()).getText());
-									LabelPanel.remove(((JLabel)e3.getSource()));
-									internalFrame.revalidate();
-									internalFrame.repaint();
-									imagePanel.repaint();
-									
-								}
-								remove_clicked=false;
-								
-							}
-							
-						}
-
-						//TODO: add labels in the centre of polygons
-						
-						public void mouseEntered(MouseEvent e) {
-							String key = ((JLabel)e.getSource()).getText();
-							imagePanel.displayPolygon(key, Color.red);
-							
-						}
-
-						public void mouseExited(MouseEvent e2) {
-							String key = ((JLabel)e2.getSource()).getText();
-							if (!key.equals(currentLabel)){
-								imagePanel.displayPolygon(key, Color.GREEN);
-							}
-							
-						}
-
-						public void mousePressed(MouseEvent arg0) {
-						}
-
-						public void mouseReleased(MouseEvent arg0) {
-						}
-			    		
-			    	});
-			    	
-			    	
 			}
 		});
-		//TODO: confusing message
-		closeButton.setToolTipText("click to add new polygon");
-		toolboxPanel.add(closeButton);
+		closeButton.setToolTipText("Click to complete this annotation object");
+		creationPanel.add(closeButton);
 		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.setMnemonic(KeyEvent.VK_C);
@@ -574,32 +573,22 @@ public class ImageLabeller extends JFrame {
 
 			public void actionPerformed(ActionEvent arg0) {
 				
-				if (imagePanel.get_currentPolygon()!=null){
+				if (imagePanel.getCurrentPolygon()!=null){
 				    	
-				      imagePanel.revalidate();
+				      imagePanel.setCurrentPolygon(null);
 					  imagePanel.repaint();
 				    	
-				    }
+				   }
 			}
 		});
 		cancelButton.setToolTipText("Cancel creating the polygon");
-		toolboxPanel.add(cancelButton);
+		creationPanel.add(cancelButton);
 	
 	
 		//add toolbox to window
-		toolboxPanel.setPreferredSize(new Dimension(200,500));
+		toolboxPanel.setPreferredSize(new Dimension(200,600));
 		appPanel.add(toolboxPanel);
 
-		
-		//add listeners to Edit and Remove methods
-		Edit.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				edit_clicked=true;
-			}
-			
-		});
-		
 		// display all the stuff
 		 this.setSize(1100,700);
 		pack();
@@ -638,19 +627,6 @@ public class ImageLabeller extends JFrame {
 		//file has no extension and is not a folder so refuse it
 		if (nameParts.length == 0) return "";
 		return nameParts[nameParts.length - 1];
-	}
-	
-	
-	
-	public void visiualizeLabelFrame() {
-		if (!internalFrame.isVisible()){
-    		internalFrame.setOpaque(true);
-    		internalFrame.setSize(desktop.getWidth(), 200);
-    		internalFrame.setVisible(true);
-    		optionsPanel.add(Edit);
-    		optionsPanel.add(Remove);
-    		
-    	}
 	}
 	
 	class CustomFileFilter extends FileFilter {
@@ -695,13 +671,13 @@ public class ImageLabeller extends JFrame {
 
 		public void actionPerformed(ActionEvent arg0) {
 			
-			if (imagePanel.get_currentPolygon() != null){
-				ArrayList<Point> currentPolygon  = imagePanel.get_currentPolygon();
+			if (imagePanel.getCurrentPolygon() != null){
+				ArrayList<Point> currentPolygon  = imagePanel.getCurrentPolygon();
 				//TODO: how does this get reflected in the polygon cache?
 				currentPolygon.remove(currentPolygon.size()-1);
 				
 				imagePanel.repaint();
-				imagePanel.drawPolygon(currentPolygon,Color.GREEN);
+				//imagePanel.drawPolygon(currentPolygon,Color.GREEN);
 				///imagePanel.setCurrentPolygon(currentPolygon);
 				System.out.println( "is the cache and current equal "+ (currentPolygon.size()==imagePanel.currentPolygon_cache.size()) + " the size is "+ currentPolygon.size());
 				
@@ -723,12 +699,12 @@ public class ImageLabeller extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 						
-				if (imagePanel.get_currentPolygon().size()!= imagePanel.currentPolygon_cache.size()){
+				if (imagePanel.getCurrentPolygon().size()!= imagePanel.currentPolygon_cache.size()){
 					System.out.println("it enters here");
-				  ArrayList<Point> currentPolygon  = imagePanel.get_currentPolygon();
+				  ArrayList<Point> currentPolygon  = imagePanel.getCurrentPolygon();
 				  currentPolygon.add(imagePanel.currentPolygon_cache.get(currentPolygon.size()));
 				
-				  imagePanel.drawPolygon(currentPolygon, Color.GREEN);
+				  //imagePanel.drawPolygon(currentPolygon, Color.GREEN);
 				}
 			}
 		}
