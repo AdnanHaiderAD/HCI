@@ -3,7 +3,8 @@
 \geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
 %\geometry{landscape}                % Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{graphic
+\usepackage{graphicx}
+\usepackage{parskip}
 \usepackage{amssymb}
 \usepackage{epstopdf}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
@@ -16,18 +17,25 @@
 \maketitle
 %\section{}
 %\subsection{}
+\setlength{\parindent}{1cm}
+\section {Objective}
+The purpose of this practical is to design and implement a standalone image annotation application that satisfies the following User requirements:
 
-\section {User Requirements}
 \begin{itemize}
 \item  User friendly way of opening an image
-\item  User friendly way of editing, adding and deleting image labels and selecting corresponding imageareas
+\item  User friendly way of editing, adding and deleting image labels and selecting corresponding image
+areas
 \item  User friendly way of saving and loading the label set
 \item The interface is easy to use
 \item The interface allow fast processing of large number of images
+\item The layout uses affordances to guide users.
 \end{itemize}
 
+
+
+  
 \section {Obtaining data}
-The aim of this practical is to design  and implement  a more user friendly standalone application than the  currently existing Label Me tool  to produce annotated image databases.  Before defining the functional specification of our system, we first  analysed the existing system \(``Label Me ``\) to gain insights on what areas has the tool  been successful and on what areas has it failed to cope the usability requirements.
+ Before designing and  defining the functional specification of our system, we first  analysed the existing system \(``Label Me ``\) to gain insights on what areas has this web based tool  been successful and on what areas has it failed to cope the usability requirements.
 
 Upon careful analysis, we have found the following usability problems associated with ``Label Me" tool:
 \begin{enumerate}
@@ -36,8 +44,8 @@ Upon careful analysis, we have found the following usability problems associated
 \item One of the main disadvantages that we have found is that the tool does not provide any means for a user to save his work and  progress to a different image. The inability to move between different projects hence makes the tool less appealing to potential users.
 \item Another flaw that we encountered  during our analysis is in the use of the \emph{Zoom Buttons}. The user is not allowed to zoom any portion of the annotated image when he/she is in the process of creating a polygon. This restriction is totally redundant and only puts more unnecessary on how the user can interact with the tool.
 \item To edit a polygon, the user is required to click in a specific region inside the polygon. Since the region is not specified, needless time and effort has to be spent on locating this region. In addition, the tool does not provide any options to \textbf{ add new points} or \text{remove points} from an existing saved polygon.
-
 \end{enumerate}
+
 
 Apart from the cons , the ``Label Me "  provides a user with a range of functionalities :
 \begin {itemize}
@@ -49,7 +57,31 @@ Apart from the cons , the ``Label Me "  provides a user with a range of function
 
 
 
+\section {Design  and  Implementation Process}
 
+The design of our interface consists of a bottom up approach. To be more elaborate, we have divided the design and implementation stages into 3 layers(show in figure 1). 
+\begin{figure}
+\centerline{\includegraphics[height=100mm]{layers.jpg}}
+\caption{}
+\label{DM}
+\end{figure}
+
+
+Hence,  our aim  has been to develop an  initial primitive interface and then  add higher functionalities at each stage/layer hence extending the range of user capabilities . In our methodology, prior to the implementation process of each layer, we have applied  task analysis and phototype evaluation to evaluate the practicality of our designs.
+We have attempted to follow  a combination of Shneiderman' and Neilsans HCi design rules for all the 3 stages. The rules that we have taken into consideration are as follows:
+\begin{enumerate}
+\item  Enable frequent users to use shortcuts
+\item  Offer informative feedback
+\item Design dialogs to yield closure
+\item  Offer error prevention and simple error handling
+\item  Permit easy reversal of actions
+\item Match between system and the real world
+\item User control and freedom
+\end{enumerate}
+
+
+
+ 
 
 
 \end{document}  

@@ -428,8 +428,8 @@ public class ImageLabeller extends JFrame {
         
         ///creating the editor Panel
         Editor = new JInternalFrame("Editing",false,false, false);
-        //for(MouseListener listener : ((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().getMouseListeners())
-        	//((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().removeMouseListener(listener);
+        for(MouseListener listener : ((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().getMouseListeners())
+        	((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().removeMouseListener(listener);
         
         editPanel = new JPanel();
         editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
