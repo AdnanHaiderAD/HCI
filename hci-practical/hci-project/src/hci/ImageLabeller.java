@@ -71,7 +71,6 @@ public class ImageLabeller extends JFrame {
 	JPanel toolboxPanel = null;
 	
 	/* containers to hold and display labels created by the user */
-	//TODO: why Desktop Pane? Looks movable but isn't
 	JInternalFrame  internalFrame=null;
 	JList LabelPanel = null;
 	JInternalFrame creationFrame= null;
@@ -614,7 +613,6 @@ public class ImageLabeller extends JFrame {
 			// create a window and display the image
 			ImageLabeller window = new ImageLabeller();
 			window.setupGUI(argv[0]);
-			//TODO: why here this since we override it anyway
 			window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		} catch (Exception e) {
 			System.err.println("Image: " + argv[0]);
