@@ -338,6 +338,13 @@ public class ImageLabeller extends JFrame {
 		labelFrame.setPreferredSize(new Dimension(toolboxPanel.getWidth(), 200));
 		labelFrame.setVisible(true);
        
+<<<<<<< HEAD
+=======
+      //  for(MouseListener listener : ((javax.swing.plaf.basic.BasicInternalFrameUI) this.internalFrame.getUI()).getNorthPane().getMouseListeners()){
+        //	((javax.swing.plaf.basic.BasicInternalFrameUI) this.internalFrame.getUI()).getNorthPane().removeMouseListener(listener);
+        //	}
+        
+>>>>>>> 9d7f57183d85f8a23623a7e532024bd3539559d3
         LabelPanel = new JList();// this ensures the new labels are stacked vertically.
         LabelPanel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
@@ -456,8 +463,15 @@ public class ImageLabeller extends JFrame {
         });
         
         ///creating the editor Panel
+<<<<<<< HEAD
         editFrame = new JInternalFrame("Editing Toolbox", false, false, false);
         editFrame.setVisible(false);
+=======
+        Editor = new JInternalFrame("Editing",false,false, false);
+        //for(MouseListener listener : ((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().getMouseListeners())
+        	//((javax.swing.plaf.basic.BasicInternalFrameUI) this.Editor.getUI()).getNorthPane().removeMouseListener(listener);
+        
+>>>>>>> 9d7f57183d85f8a23623a7e532024bd3539559d3
         editPanel = new JPanel();
         //GridBagLayout g = new GridBagLayout();
         //GridBagConstraints c = new GridBagConstraints();
