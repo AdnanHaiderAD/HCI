@@ -41,12 +41,15 @@ public class ImagePanel extends JPanel implements MouseListener {
 	 * image to be tagged
 	 */
 	private BufferedImage image = null;
+	private BufferedImage originalImage = null;
 
 	/**
 	 * list of current polygon's vertices
 	 */
 	private ArrayList<Point> currentPolygon = null;
-	public String currentLabel = null;
+	public String editedLabel = null; //the current label of the polygon being edited, or null if no polygon is being edited
+	private ArrayList<Point> editedPolygon = null;
+	
 	private ArrayList<Point> selectedPolygon = null;
 	ArrayList<Point> currentPolygon_cache = null;// cache holding a copy of
 													// current polygon
@@ -99,6 +102,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 					BufferedImage.TYPE_INT_RGB);
 			image.getGraphics().drawImage(scaledImage, 0, 0, this);
 		}
+		originalImage = image;
 	}
 
 	public void changePicture(String imageName) throws Exception {
@@ -117,10 +121,10 @@ public class ImagePanel extends JPanel implements MouseListener {
 			image.getGraphics().drawImage(scaledImage, 0, 0, this);
 		}
 		currentPolygon = new ArrayList<Point>();
-		currentPolygon_cache = new ArrayList<Point>();
 		polygontable = new Hashtable<String, ArrayList<Point>>();
 		revalidate();
 		repaint();
+		originalImage = image;
 	}
 
 	public void loadProject(SerializableImage image,
@@ -136,24 +140,23 @@ public class ImagePanel extends JPanel implements MouseListener {
 			}
 		}
 		currentPolygon = polygon;
-		currentPolygon_cache = new ArrayList<Point>();
-		currentPolygon_cache.addAll(polygon);
 		polygontable = polygons;
 		revalidate();
 		repaint();
+		originalImage = this.image;
 	}
-
 	
-	public void scale(double factor) {
-		int newWidth = (int) Math.round(image.getWidth() * factor);
-		int newHeight = (int) Math.round(image.getHeight() * factor);
+	public void scale(double factor, double current_scale) {
+		int newWidth = (int) Math.round(originalImage.getWidth() * factor);
+		int newHeight = (int) Math.round(originalImage.getHeight() * factor);
 		
+		System.out.println(originalImage.getWidth()* factor + ", " + originalImage.getHeight()* factor);
 		//TODO: grey out the zoom buttons when not needed. Also: a sroller can be made for the zoom level not just buttons
 		if (newWidth > 3200 || newHeight > 2400) return;
-		if (newWidth < 721 && newHeight < 541) return;
+		if (newWidth < 740 && newHeight < 560) return;
 		
 		System.out.println("SCALING TO " + newWidth + "x" + newHeight);
-		Image scaledImage = image.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST);
+		Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_FAST);
 		image = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
 		image.getGraphics().drawImage(scaledImage, 0, 0, this);
 		
@@ -168,14 +171,14 @@ public class ImagePanel extends JPanel implements MouseListener {
 			ArrayList<Point> polygon = polygontable.get(en.nextElement());
 			for (int i = 0; i < polygon.size(); i++) {
 				Point p = polygon.get(i);
-				polygon.set(i, new Point((int)(p.getX()*factor), (int)(p.getY()*factor)));
+				polygon.set(i, new Point((int) Math.round(p.getX()*factor/current_scale), (int)Math.round(p.getY()*factor/current_scale)));
 			}
 		}
 		
 		if (currentPolygon != null) {
 			for (int i = 0; i < currentPolygon.size(); i++) {
 				Point p = currentPolygon.get(i);
-				currentPolygon.set(i, new Point((int)(p.getX()*factor), (int)(p.getY()*factor)));
+				currentPolygon.set(i, new Point((int)Math.round(p.getX()*factor/current_scale), (int)Math.round(p.getY()*factor/current_scale)));
 			}
 		}
 	}
@@ -212,7 +215,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 		}
 	}
 
-	public void stopEditing() {
+	public void stopPointEditing() {
 		addpoint = false;// /no more points can be added just by clicking
 		removePoint = false;
 		adjustPoint = false;
@@ -259,12 +262,31 @@ public class ImagePanel extends JPanel implements MouseListener {
 		if (currentPolygon != null) {
 			drawPolygon(currentPolygon, new Color(255, 170, 0), g);
 			fillPolygon(currentPolygon, g, new Color(255, 200, 3, 40));
-			if (currentLabel != null) {
+			if (editedLabel != null) {
 				if (!addpoint)
 					finishPolygon(currentPolygon, new Color(255, 170, 0), g);
-				drawName(currentPolygon, currentLabel, Color.GREEN, g);
 			}
 		}
+	}
+	
+	public void startEditing(ArrayList<Point> polygon, String label) {
+		editedPolygon = new ArrayList<Point>();
+		for (Point p : polygon) {
+			editedPolygon.add(new Point(p.getX(), p.getY()));
+		}
+		editedLabel = label;
+	}
+	
+	public void endEditing() {
+		editedPolygon = null;
+		editedLabel = null;
+	}
+	
+	public void cancelEdit() {
+		if (editedLabel !=null)	polygontable.put(editedLabel, editedPolygon);
+		editedPolygon = null;
+		editedLabel = null;
+		currentPolygon = null;
 	}
 
 	public void fillPolygon(ArrayList<Point> polygon, Graphics g, Color color) {
@@ -304,7 +326,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 			Graphics g) {
 		Point centre = getCentreOfPolygon(polygon);
 		g.setColor(new Color(3, 3, 3, 128));
-		g.fillRect(centre.getX() - 5, centre.getY() - 15, label.length() * 9,
+		g.fillRect(centre.getX() - 5, centre.getY() - 15, label.length() * 10,
 				20);
 		g.setColor(color);
 		g.setFont(new Font("Verenda", Font.LAYOUT_LEFT_TO_RIGHT, 16));
@@ -374,7 +396,6 @@ public class ImagePanel extends JPanel implements MouseListener {
 	public void finalizePolygon(String key) {
 		// finish the current polygon if any
 		if (currentPolygon != null) {
-			System.out.println(key);
 			polygontable.put(key, currentPolygon);
 			currentPolygon = null;
 			currentPolygon_cache = null;
@@ -384,8 +405,8 @@ public class ImagePanel extends JPanel implements MouseListener {
 
 	public int findIndex(ArrayList<Point> polygon, Point pt) {
 		for (Point p : currentPolygon) {
-			if ((Math.abs(p.getX() - pt.getX()) < 5)
-					&& (Math.abs(p.getY() - pt.getY()) < 5)) {
+			if ((Math.abs(p.getX() - pt.getX()) < 10)
+					&& (Math.abs(p.getY() - pt.getY()) < 10)) {
 				return currentPolygon.indexOf(p);
 
 			}
