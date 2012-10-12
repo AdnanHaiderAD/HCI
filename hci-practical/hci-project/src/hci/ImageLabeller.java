@@ -106,7 +106,7 @@ public class ImageLabeller extends JFrame {
 	 
 	 /*create the undo and redo action objects*/
 	 UndoAction undo = new UndoAction("Undo","Undo previous step",new Integer(KeyEvent.VK_3));
-	 RedoAction redo = new RedoAction("Redo","Redo previous step",new Integer(KeyEvent.VK_4));
+	 RedoAction redo = new RedoAction("Redo","Redo next step",new Integer(KeyEvent.VK_4));
 	
 	 double prev_zoom = 100;
 	 
@@ -120,7 +120,7 @@ public class ImageLabeller extends JFrame {
 	 * @param imageFilename -  image to be loaded for editing
 	 * @throws Exception
 	 */
-	public void setupGUI(String imageFilename) throws Exception {
+	public void setupGUI() throws Exception {
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
@@ -153,7 +153,6 @@ public class ImageLabeller extends JFrame {
 		fileItem2.setAccelerator(KeyStroke.getKeyStroke('O', CTRL_DOWN_MASK));
 		fileItem3.setAccelerator(KeyStroke.getKeyStroke('S', CTRL_DOWN_MASK));
 		fileItem4.setAccelerator(KeyStroke.getKeyStroke('Q', CTRL_DOWN_MASK));
-		
 		
 		//edit menu
 		JMenu editmenu = new JMenu("Edit");
@@ -304,7 +303,7 @@ public class ImageLabeller extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		
 		// Create and set up the image panel.
-		imagePanel = new ImagePanel(imageFilename);
+		imagePanel = new ImagePanel();
 		imagePanel.setOpaque(true); //content panes must be opaque
         JScrollPane imageScroller = new JScrollPane(imagePanel);
         imageScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -387,7 +386,7 @@ public class ImageLabeller extends JFrame {
 						}
 					imagePanel.stopPointEditing();
 					imagePanel.addpoint = true;
-					imagePanel.setCurrentPolygon(new ArrayList<Point>());
+					imagePanel.startNewPolygon();
 					imagePanel.revalidate();
 					imagePanel.repaint();
 					
@@ -416,7 +415,6 @@ public class ImageLabeller extends JFrame {
 				name.setText(selected);
 				ArrayList<Point> to_edit = imagePanel.getPolygonTable().get(selected);
 				imagePanel.removePolygon(selected);
-				imagePanel.setCurrentPolygon(to_edit);
 				imagePanel.repaint();
 				imagePanel.startEditing(to_edit, (String) LabelPanel.getSelectedValue());
 					
@@ -438,7 +436,14 @@ public class ImageLabeller extends JFrame {
 				String[] options = {"Yes","No"};
 				int reval =  JOptionPane.showOptionDialog(appPanel, "Do you really wish to remove this object?", "Confirm Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 				if (reval== JOptionPane.YES_OPTION){
-					imagePanel.removePolygon((String)LabelPanel.getSelectedValue());
+					//remove the selected polygon and check if it was the current polygon
+					if (imagePanel.removePolygon((String)LabelPanel.getSelectedValue())) {
+						//if yes, hide the edit panel and reset stuff
+						imagePanel.stopPointEditing();
+						imagePanel.endEdit();
+						editFrame.setVisible(false);
+						name.setText("");
+					}
 					//update the LabelPanel
 					ArrayList<String> list = Collections.list(imagePanel.getPolygonTable().keys());
 				    LabelPanel.setListData(list.toArray(new String[list.size()]));
@@ -459,6 +464,10 @@ public class ImageLabeller extends JFrame {
         editFrame = new JInternalFrame("Editing Toolbox", false, false, false);
         editFrame.setVisible(false);
         editPanel = new JPanel();
+        editPanel.setSize(new Dimension(200, 200));
+        editPanel.setMinimumSize(new Dimension(200, 200));
+        editPanel.setMaximumSize(new Dimension(200, 200));
+        editPanel.setPreferredSize(new Dimension(200, 200));
         //GridBagLayout g = new GridBagLayout();
         //GridBagConstraints c = new GridBagConstraints();
         //editPanel.setLayout(g);
@@ -466,10 +475,11 @@ public class ImageLabeller extends JFrame {
         JLabel label = new JLabel("Label:   ");
         JLabel tools = new JLabel("Tools");
         tools.setFont(new Font("Verenda", Font.BOLD, 16));
-        tools.setSize(170, 30);
-        tools.setPreferredSize(new Dimension(170, 30));
-        tools.setMaximumSize(new Dimension(170, 30));
-        tools.setMinimumSize(new Dimension(170, 30));
+        tools.setSize(70, 30);
+        tools.setVerticalAlignment(SwingConstants.TOP);
+        tools.setPreferredSize(new Dimension(70, 30));
+        tools.setMaximumSize(new Dimension(70, 30));
+        tools.setMinimumSize(new Dimension(70, 30));
         
         //TODO: Attention!! Need to change these if we change the structure of the folders!!
         BufferedImage buttonIcon = ImageIO.read(new File("../images/addButton.png"));
@@ -503,24 +513,55 @@ public class ImageLabeller extends JFrame {
         remP.setSelectedIcon(new ImageIcon(buttonIcon));
         remP.setMnemonic(KeyEvent.VK_R);
         
+        buttonIcon = ImageIO.read(new File("../images/undoButton.png"));
+        JButton undoButton = new JButton();
+        undoButton.setSize(new Dimension(45, 30));
+        undoButton.setPreferredSize(new Dimension(45, 30));
+        undoButton.setMinimumSize(new Dimension(45, 30));
+        undoButton.setMaximumSize(new Dimension(45, 30));
+        undoButton.setBorder(BorderFactory.createEmptyBorder());
+        undoButton.setContentAreaFilled(false);
+        undoButton.setAction(undo);
+        undoButton.setIcon(new ImageIcon(buttonIcon));
+        buttonIcon = ImageIO.read(new File("../images/undoHovered.png"));
+        undoButton.setRolloverIcon(new ImageIcon(buttonIcon));
+        undoButton.setText("");
+        
+        buttonIcon = ImageIO.read(new File("../images/redoButton.png"));
+        JButton redoButton = new JButton();
+        redoButton.setSize(new Dimension(45, 30));
+        redoButton.setPreferredSize(new Dimension(45, 30));
+        redoButton.setMinimumSize(new Dimension(45, 30));
+        redoButton.setMaximumSize(new Dimension(45, 30));
+        redoButton.setBorder(BorderFactory.createEmptyBorder());
+        redoButton.setContentAreaFilled(false);
+        redoButton.setAction(redo);
+        redoButton.setText("");
+        redoButton.setIcon(new ImageIcon(buttonIcon));
+        buttonIcon = ImageIO.read(new File("../images/redoHovered.png"));
+        redoButton.setRolloverIcon(new ImageIcon(buttonIcon));
+        
         name.setSize(120, 20);
         name.setPreferredSize(new Dimension(120, 20));
         name.setMinimumSize(new Dimension(120, 20));
         name.setMaximumSize(new Dimension(120, 20));
         name.setToolTipText("Name for your object");
         
-        editPanel.add(Box.createRigidArea(new Dimension(170,5)));
+        editPanel.add(Box.createRigidArea(new Dimension(170,10)));
         editPanel.add(label);
         editPanel.add(name);
-        editPanel.add(Box.createRigidArea(new Dimension(170,2)));
+        editPanel.add(Box.createRigidArea(new Dimension(170,25)));
         editPanel.add(tools);
+        editPanel.add(undoButton);
+        editPanel.add(redoButton);
+        editPanel.add(Box.createRigidArea(new Dimension(170,5)));
         editPanel.add(addP);
         addP.setToolTipText("Add points to the current object");
         editPanel.add(adjP);
         adjP.setToolTipText("Repoistion a point from the current object");
         editPanel.add(remP);
         remP.setToolTipText("Remove a point from the current object");
-        editPanel.add(Box.createRigidArea(new Dimension(170,20)));
+        editPanel.add(Box.createRigidArea(new Dimension(170,30)));
         editPanel.add(save);
         save.setMnemonic(KeyEvent.VK_ENTER);
         save.setToolTipText("Click to save the current annotated object");
@@ -576,11 +617,16 @@ public class ImageLabeller extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				
 			  if (name.getText().equals("")) {
-				  JOptionPane.showMessageDialog(appPanel, "You must add a name for your object");
+				  JOptionPane.showMessageDialog(appPanel, "You must add a name for your object.");
 				  return;
 			  }
+			  if (Collections.list(imagePanel.getPolygonTable().keys()).contains(name.getText())) {
+				  JOptionPane.showMessageDialog(appPanel, "There is already an object with the same label. Please change your label.");
+				  return;
+			  }
+			  
 			  if (imagePanel.getCurrentPolygon().size()<3) {
-				  JOptionPane.showMessageDialog(appPanel, "Your object must countain at least three points");
+				  JOptionPane.showMessageDialog(appPanel, "Your object must countain at least three points.");
 				  return;
 			  }
 			  
@@ -590,8 +636,7 @@ public class ImageLabeller extends JFrame {
 			  String label = (String) LabelPanel.getSelectedValue();
 			  if (label != null) imagePanel.setSelectedPolygon(label);
 			  else imagePanel.setSelectedPolygon(null);
-			  
-			  imagePanel.endEditing();
+			 
 			  name.setText("");
 
 			  //refresh views
@@ -640,7 +685,7 @@ public class ImageLabeller extends JFrame {
 			}	
         });
         zoom.setToolTipText("Move the slider to zoom in an out of the picture");
-        zoomPanel.setPreferredSize(new Dimension(200,20));
+        zoomPanel.setPreferredSize(new Dimension(220,20));
         
         zoomPanel.add(zoomLabel);
         zoomPanel.add(Box.createRigidArea(new Dimension(10,20)));
@@ -653,7 +698,7 @@ public class ImageLabeller extends JFrame {
         toolboxPanel.add(zoomPanel);
         
 		//add toolbox to window
-		toolboxPanel.setPreferredSize(new Dimension(200,620));
+		toolboxPanel.setPreferredSize(new Dimension(220,620));
       
 		appPanel.add(leftPanel);
 		appPanel.add(toolboxPanel);
@@ -705,14 +750,21 @@ public class ImageLabeller extends JFrame {
 		status.addKeyListener(k);
 		
 		// display all the stuff
-		this.setSize(1100,700);
+		this.setSize(1200,700);
 		pack();
 		setVisible(true);
-		//System.out.println(this.getSize().getHeight() + " "
-		//		+ this.getSize().getWidth());
 		
 		validate();
 		repaint();
+
+		//ask the user whether he want to load a new image or to open an existing project
+		String[] options = {"Load a New Image","Open and Existing Project"};
+		int reval =  JOptionPane.showOptionDialog(appPanel, "Do you want to load a new image for annotation or to open an existing project?", "What do you want to do?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+		if (reval==JOptionPane.YES_OPTION) {
+			fileItem1.doClick();
+		} else {
+			fileItem2.doClick();
+		}
 		
 	}
 
@@ -726,7 +778,7 @@ public class ImageLabeller extends JFrame {
 		try {
 			// create a window and display the image
 			ImageLabeller window = new ImageLabeller();
-			window.setupGUI(argv[0]);
+			window.setupGUI();
 			window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		} catch (Exception e) {
 			System.err.println("Image: " + argv[0]);
@@ -782,15 +834,7 @@ public class ImageLabeller extends JFrame {
 		}
 
 		public void actionPerformed(ActionEvent arg0) {
-			
-			if (imagePanel.getCurrentPolygon() != null){
-				ArrayList<Point> currentPolygon  = imagePanel.getCurrentPolygon();
-				//TODO: how does this get reflected in the polygon cache?
-				currentPolygon.remove(currentPolygon.size()-1);
-				
-				imagePanel.repaint();
-				///imagePanel.setCurrentPolygon(currentPolygon);
-			}
+				imagePanel.undo();
 		}
 	}	
 		
@@ -802,17 +846,11 @@ public class ImageLabeller extends JFrame {
 				super(text);
 				putValue(SHORT_DESCRIPTION,desc);
 				putValue(MNEMONIC_KEY, mnemonic);
-				
-				
+		
 			}
 
 			public void actionPerformed(ActionEvent e) {
-						
-				if (imagePanel.getCurrentPolygon().size()!= imagePanel.currentPolygon_cache.size()){
-				  ArrayList<Point> currentPolygon  = imagePanel.getCurrentPolygon();
-				  currentPolygon.add(imagePanel.currentPolygon_cache.get(currentPolygon.size()));
-				
-				}
+				imagePanel.redo();
 			}
 		}
 	}

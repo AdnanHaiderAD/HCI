@@ -47,13 +47,18 @@ public class ImagePanel extends JPanel implements MouseListener {
 	 * list of current polygon's vertices
 	 */
 	private ArrayList<Point> currentPolygon = null;
+	private ArrayList<Point> selectedPolygon = null;
 	public String editedLabel = null; //the current label of the polygon being edited, or null if no polygon is being edited
 	private ArrayList<Point> editedPolygon = null;
+	ArrayList<Point> pointCache = null;// cache holding a copy of current polygon
+	ArrayList<Short> actionCache = null;
+	ArrayList<Integer> indexCache = null;
+	int cacheIndex = -1; //points to the currently last performed action
 	
-	private ArrayList<Point> selectedPolygon = null;
-	ArrayList<Point> currentPolygon_cache = null;// cache holding a copy of
-													// current polygon
-
+	public static final Short NEW = 1;
+	public static final Short MOVE = 2;
+	public static final Short REMOVE = 3;
+	
 	/**
 	 * list of polygons and colours for them
 	 */
@@ -187,13 +192,18 @@ public class ImagePanel extends JPanel implements MouseListener {
 		return polygontable;
 	}
 
-	public void removePolygon(String key) {
-		ArrayList<Point> polygon = polygontable.get(key);
-		if (polygon == selectedPolygon)
-			selectedPolygon = null;
-		if (polygon == currentPolygon)
+	//returns true if it removed the currentPolygon
+	public boolean removePolygon(String key) {
+		if (key==null) return false;
+		System.out.println(key);
+		if ((!polygontable.containsKey(key)) && ((editedLabel==null) || (!editedLabel.equals(key)))) return false;
+		if (editedLabel != null && editedLabel.equals(key)) {
 			currentPolygon = null;
+			return true;
+		}
+		selectedPolygon = null;
 		polygontable.remove(key);
+		return false;
 	}
 
 	public ArrayList<Point> getCurrentPolygon() {
@@ -209,10 +219,6 @@ public class ImagePanel extends JPanel implements MouseListener {
 
 	public void setCurrentPolygon(ArrayList<Point> polygon) {
 		currentPolygon = polygon;
-		if (currentPolygon != null) {
-			currentPolygon_cache = new ArrayList<Point>();
-			currentPolygon_cache.addAll(currentPolygon);
-		}
 	}
 
 	public void stopPointEditing() {
@@ -232,7 +238,103 @@ public class ImagePanel extends JPanel implements MouseListener {
 		return new SerializableImage(image.getWidth(), image.getHeight(), image
 				.getType(), pixels);
 	}
+	public void startNewPolygon() {
+		currentPolygon = new ArrayList<Point>();
+		pointCache = new ArrayList<Point>();
+		actionCache = new ArrayList<Short>();
+		indexCache = new ArrayList<Integer>();
+	}
+	
+	public void startEditing(ArrayList<Point> polygon, String label) {
+		pointCache = new ArrayList<Point>();
+		actionCache = new ArrayList<Short>();
+		indexCache = new ArrayList<Integer>();
+		currentPolygon = polygon;
+		editedPolygon = new ArrayList<Point>();
+		for (Point p : polygon) {
+			editedPolygon.add(new Point(p.getX(), p.getY()));
+		}
+		editedLabel = label;
+	}
 
+	public void cancelEdit() {
+		pointCache = null;
+		actionCache = null;
+		indexCache = null;
+		cacheIndex = -1;
+		if (editedLabel !=null)	polygontable.put(editedLabel, editedPolygon);
+		editedPolygon = null;
+		editedLabel = null;
+		currentPolygon = null;
+	}
+	
+	public void endEdit() {
+		pointCache = null;
+		actionCache = null;
+		indexCache = null;
+		cacheIndex = -1;
+		editedPolygon = null;
+		editedLabel = null;
+		currentPolygon = null;
+	}
+	
+	public void undo() {
+		if (cacheIndex >= 0) {
+			System.out.println(indexCache.get(cacheIndex) + ", " +  actionCache.get(cacheIndex)) ;
+			int action = actionCache.get(cacheIndex);
+			if (action == NEW) {
+				currentPolygon.remove((int)indexCache.get(cacheIndex));
+			} else if (action == MOVE) {
+				//swap the points
+				Point p = pointCache.remove(cacheIndex);
+				pointCache.add(cacheIndex,currentPolygon.remove((int) indexCache.get(cacheIndex)));
+				currentPolygon.add(indexCache.get(cacheIndex),p);
+			} else if (action==REMOVE) {
+				currentPolygon.add(indexCache.get(cacheIndex), pointCache.get(cacheIndex));
+			}
+			cacheIndex--;
+		}
+		repaint();
+	}
+	
+	public void redo() {
+		if (actionCache.size()-1 > cacheIndex) {
+			cacheIndex++;
+			int action = actionCache.get(cacheIndex);
+			if (action == NEW) {
+				currentPolygon.add(indexCache.get(cacheIndex), pointCache.get(cacheIndex));
+			} else if (action == MOVE) {
+				Point p = pointCache.remove(cacheIndex);
+				pointCache.add(cacheIndex,currentPolygon.remove((int) indexCache.get(cacheIndex)));
+				currentPolygon.add(indexCache.get(cacheIndex),p);
+			} else if (action==REMOVE) {
+				currentPolygon.remove((int)indexCache.get(cacheIndex));
+			}
+			
+		}
+		repaint();
+	}
+	
+	/**
+	 * moves current polygon to the list of polygons and makes pace for a new
+	 * one
+	 */
+	public void finalizePolygon(String key) {
+		// finish the current polygon if any
+		editedPolygon = null;
+		editedLabel = null;
+		pointCache = null;
+		actionCache = null;
+		indexCache = null;
+		cacheIndex = -1;
+		if (currentPolygon != null) {
+			polygontable.put(key, currentPolygon);
+			currentPolygon = null;
+			pointCache = null;
+			repaint();
+		}
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -268,27 +370,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 			}
 		}
 	}
-	
-	public void startEditing(ArrayList<Point> polygon, String label) {
-		editedPolygon = new ArrayList<Point>();
-		for (Point p : polygon) {
-			editedPolygon.add(new Point(p.getX(), p.getY()));
-		}
-		editedLabel = label;
-	}
-	
-	public void endEditing() {
-		editedPolygon = null;
-		editedLabel = null;
-	}
-	
-	public void cancelEdit() {
-		if (editedLabel !=null)	polygontable.put(editedLabel, editedPolygon);
-		editedPolygon = null;
-		editedLabel = null;
-		currentPolygon = null;
-	}
-
+		
 	public void fillPolygon(ArrayList<Point> polygon, Graphics g, Color color) {
 		g.setColor(color);
 		Polygon pol = new Polygon();
@@ -300,7 +382,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 		g2.dispose();
 
 	}
-
+	
 	public Point getCentreOfPolygon(ArrayList<Point> polygon) {
 		int averageX = 0;
 		int averageY = 0;
@@ -389,20 +471,6 @@ public class ImagePanel extends JPanel implements MouseListener {
 		}
 	}
 
-	/**
-	 * moves current polygon to the list of polygons and makes pace for a new
-	 * one
-	 */
-	public void finalizePolygon(String key) {
-		// finish the current polygon if any
-		if (currentPolygon != null) {
-			polygontable.put(key, currentPolygon);
-			currentPolygon = null;
-			currentPolygon_cache = null;
-			repaint();
-		}
-	}
-
 	public int findIndex(ArrayList<Point> polygon, Point pt) {
 		for (Point p : currentPolygon) {
 			if ((Math.abs(p.getX() - pt.getX()) < 10)
@@ -424,13 +492,34 @@ public class ImagePanel extends JPanel implements MouseListener {
 			Point pt = new Point(x, y);
 			int index = findIndex(currentPolygon, pt);
 			if (index < currentPolygon.size() && index >= 0) {
-				currentPolygon.remove(index);
+				if (cacheIndex < pointCache.size() - 1) {
+					for (int i = 0; i< pointCache.size() - 1 - cacheIndex; i++) {
+						pointCache.remove(pointCache.size()-1);
+						actionCache.remove(actionCache.size()-1);
+						indexCache.remove(indexCache.size() -1);
+					}
+				}
+				pointCache.add(currentPolygon.remove(index));
+				actionCache.add(REMOVE);
+				cacheIndex++;
+				indexCache.add(index);
 				repaint();
 			}
 		} else if (adjustPoint && indexR < currentPolygon.size() && indexR >= 0
 				&& (currentPolygon != null)) {
 			Point pt = new Point(x, y);
-			currentPolygon.remove(indexR);
+			//if we're not at the last time step in the undo/redo action cache, remove everything after the current time step
+			if (cacheIndex < pointCache.size() - 1) {
+				for (int i = 0; i< pointCache.size() - 1 - cacheIndex; i++) {
+					pointCache.remove(pointCache.size()-1);
+					actionCache.remove(actionCache.size()-1);
+					indexCache.remove(indexCache.size() -1);
+				}
+			}
+			pointCache.add(currentPolygon.remove(indexR));
+			actionCache.add(MOVE);
+			cacheIndex++;
+			indexCache.add(indexR);
 			currentPolygon.add(indexR, pt);
 			repaint();
 			indexR = 100000;
@@ -444,17 +533,23 @@ public class ImagePanel extends JPanel implements MouseListener {
 
 		else if (currentPolygon != null && addpoint) {
 			// check if the cursors with in image area
-			if (x > image.getWidth() || y > image.getHeight()) {
-				// if not do nothing
-				System.out.println("image width is " + image.getWidth());
-				return;
-			}
-
+			if (x > image.getWidth() || y > image.getHeight()) return;
 			// if the left button than we will add a vertex to polygon
 			if (e.getButton() == MouseEvent.BUTTON1) {
 
 				currentPolygon.add(new Point(x, y));
-				currentPolygon_cache.add(new Point(x, y));
+				//cache stuff
+				if (cacheIndex < pointCache.size() - 1) {
+					for (int i = 0; i< pointCache.size() - 1 - cacheIndex; i++) {
+						pointCache.remove(pointCache.size()-1);
+						actionCache.remove(actionCache.size()-1);
+						indexCache.remove(indexCache.size() -1);
+					}
+				}
+				pointCache.add(new Point(x, y));
+				actionCache.add(NEW);
+				indexCache.add(currentPolygon.size() - 1);
+				cacheIndex++;
 				System.out.println(x + " " + y);
 				repaint();
 			}
