@@ -1,0 +1,1 @@
+To run the program, just run the run.sh file located in the src folder.

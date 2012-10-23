@@ -1,16 +1,35 @@
 package orig;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Main class of the program - handles display of the main window
@@ -18,29 +37,15 @@ import java.awt.event.WindowEvent;
  *
  */
 public class ImageLabeller extends JFrame {
-	/**
-	 * some java stuff to get rid of warnings
-	 */
+
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * main window panel
-	 */
 	JPanel appPanel = null;
 	
-	/**
-	 * toolbox - put all buttons and stuff here!
-	 */
 	JPanel toolboxPanel = null;
 	
-	/**
-	 * image panel - displays image and editing area
-	 */
 	ImagePanel imagePanel = null;
 	
-	/**
-	 * handles New Object button action
-	 */
 	public void addNewPolygon() {
 		imagePanel.addNewPolygon();
 	}
@@ -48,7 +53,7 @@ public class ImageLabeller extends JFrame {
 	//@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		imagePanel.paint(g); //update image panel
+		imagePanel.paint(imagePanel.getGraphics()); //update image panel
 	}
 	
 	/**
@@ -57,16 +62,26 @@ public class ImageLabeller extends JFrame {
 	 * @throws Exception
 	 */
 	public void setupGUI(String imageFilename) throws Exception {
-		this.addWindowListener(new WindowAdapter() {
-		  	public void windowClosing(WindowEvent event) {
-		  		//here we exit the program (maybe we should ask if the user really wants to do it?)
-		  		//maybe we also want to store the polygons somewhere? and read them next time
-		  		System.out.println("Bye bye!");
-		    	System.exit(0);
-		  	}
-		});
 
-		//setup main window panel
+		//create the menu bar
+		JMenuBar menubar = new JMenuBar();
+		menubar.setOpaque(true);
+		//file menu
+		JMenu filemenu = new JMenu("File");
+		menubar.add(filemenu);
+		
+		//edit menu
+		JMenu editmenu = new JMenu("Edit");
+		menubar.add(editmenu);
+		
+		//add menubar to frame
+		this.setJMenuBar(menubar);
+		JMenuItem item = new JMenuItem("bojhuo");
+		filemenu.add(item);
+		
+		//create the action listeners for the menu items
+		
+				//setup main window panel
 		appPanel = new JPanel();
 		this.setLayout(new BoxLayout(appPanel, BoxLayout.X_AXIS));
 		this.setContentPane(appPanel);

@@ -433,7 +433,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 				g.fillRect(currentVertex.getX() + 8, currentVertex.getY() - 3,
 						12, 15);
 			g.setColor(color);
-			g.drawString(Integer.toString(i), currentVertex.getX() + 10,
+			g.drawString(Integer.toString(i+1), currentVertex.getX() + 10,
 					currentVertex.getY() + 10);
 			if (i != 0) {
 				Point prevVertex = polygon.get(i - 1);

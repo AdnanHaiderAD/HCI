@@ -16,48 +16,25 @@ import java.util.ArrayList;
 
 import hci.utils.*;
 
-/**
- * Handles image editing panel
- * @author Michal
- *
- */
 public class ImagePanel extends JPanel implements MouseListener {
-	/**
-	 * some java stuff to get rid of warnings
-	 */
+	
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * image to be tagged
-	 */
 	BufferedImage image = null;
-	
-	/**
-	 * list of current polygon's vertices 
-	 */
 	ArrayList<Point> currentPolygon = null;
-	
-	/**
-	 * list of polygons
-	 */
 	ArrayList<ArrayList<Point>> polygonsList = null;
 	
-	/**
-	 * default constructor, sets up the window properties
-	 */
 	public ImagePanel() {
 		currentPolygon = new ArrayList<Point>();
 		polygonsList = new ArrayList<ArrayList<Point>>();
-
-		this.setVisible(true);
 
 		Dimension panelSize = new Dimension(800, 600);
 		this.setSize(panelSize);
 		this.setMinimumSize(panelSize);
 		this.setPreferredSize(panelSize);
 		this.setMaximumSize(panelSize);
-		
 		addMouseListener(this);
+		
+		this.setVisible(true);
 	}
 	
 	/**
@@ -76,18 +53,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 			image = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
 			image.getGraphics().drawImage(scaledImage, 0, 0, this);
 		}
-	}
-
-	/**
-	 * Displays the image
-	 */
-	public void ShowImage() {
-		Graphics g = this.getGraphics();
-		
-		if (image != null) {
-			g.drawImage(
-					image, 0, 0, null);
-		}
+		this.setVisible(true);
 	}
 	
 	@Override
@@ -95,7 +61,12 @@ public class ImagePanel extends JPanel implements MouseListener {
 		super.paint(g);
 		
 		//display iamge
-		ShowImage();
+		if (image != null) {
+			g.drawImage(image, 0, 0, null);
+		}
+		
+		g.setColor(Color.GREEN);
+		g.drawLine(0, 0, 800, 600);
 		
 		//display all the completed polygons
 		for(ArrayList<Point> polygon : polygonsList) {
