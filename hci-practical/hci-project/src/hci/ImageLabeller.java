@@ -482,38 +482,38 @@ public class ImageLabeller extends JFrame {
         tools.setMinimumSize(new Dimension(70, 30));
         
         //TODO: Attention!! Need to change these if we change the structure of the folders!!
-        BufferedImage buttonIcon = ImageIO.read(new File("../images/addButton.png"));
+        BufferedImage buttonIcon = ImageIO.read(new File("../../images/addButton.png"));
         addP = new JButton(new ImageIcon(buttonIcon));
         addP.setBorder(BorderFactory.createEmptyBorder());
         addP.setContentAreaFilled(false);
         //hovered
-        buttonIcon = ImageIO.read(new File("../images/addHovered.png"));
+        buttonIcon = ImageIO.read(new File("../../images/addHovered.png"));
         addP.setRolloverIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/addSelected.png"));
+        buttonIcon = ImageIO.read(new File("../../images/addSelected.png"));
         addP.setSelectedIcon(new ImageIcon(buttonIcon));
         addP.setMnemonic(KeyEvent.VK_A);
         
-        buttonIcon = ImageIO.read(new File("../images/editButton.png"));
+        buttonIcon = ImageIO.read(new File("../../images/editButton.png"));
         adjP = new JButton(new ImageIcon(buttonIcon));
         adjP.setBorder(BorderFactory.createEmptyBorder());
         adjP.setContentAreaFilled(false);
-        buttonIcon = ImageIO.read(new File("../images/editHovered.png"));
+        buttonIcon = ImageIO.read(new File("../../images/editHovered.png"));
         adjP.setRolloverIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/editSelected.png"));
+        buttonIcon = ImageIO.read(new File("../../images/editSelected.png"));
         adjP.setSelectedIcon(new ImageIcon(buttonIcon));
         adjP.setMnemonic(KeyEvent.VK_M);
         
-        buttonIcon = ImageIO.read(new File("../images/removeButton.png"));
+        buttonIcon = ImageIO.read(new File("../../images/removeButton.png"));
         remP = new JButton(new ImageIcon(buttonIcon));
         remP.setBorder(BorderFactory.createEmptyBorder());
         remP.setContentAreaFilled(false);
-        buttonIcon = ImageIO.read(new File("../images/removeHovered.png"));
+        buttonIcon = ImageIO.read(new File("../../images/removeHovered.png"));
         remP.setRolloverIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/removeSelected.png"));
+        buttonIcon = ImageIO.read(new File("../../images/removeSelected.png"));
         remP.setSelectedIcon(new ImageIcon(buttonIcon));
         remP.setMnemonic(KeyEvent.VK_R);
         
-        buttonIcon = ImageIO.read(new File("../images/undoButton.png"));
+        buttonIcon = ImageIO.read(new File("../../images/undoButton.png"));
         JButton undoButton = new JButton();
         undoButton.setSize(new Dimension(45, 30));
         undoButton.setPreferredSize(new Dimension(45, 30));
@@ -523,11 +523,11 @@ public class ImageLabeller extends JFrame {
         undoButton.setContentAreaFilled(false);
         undoButton.setAction(undo);
         undoButton.setIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/undoHovered.png"));
+        buttonIcon = ImageIO.read(new File("../../images/undoHovered.png"));
         undoButton.setRolloverIcon(new ImageIcon(buttonIcon));
         undoButton.setText("");
         
-        buttonIcon = ImageIO.read(new File("../images/redoButton.png"));
+        buttonIcon = ImageIO.read(new File("../../images/redoButton.png"));
         JButton redoButton = new JButton();
         redoButton.setSize(new Dimension(45, 30));
         redoButton.setPreferredSize(new Dimension(45, 30));
@@ -538,7 +538,7 @@ public class ImageLabeller extends JFrame {
         redoButton.setAction(redo);
         redoButton.setText("");
         redoButton.setIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/redoHovered.png"));
+        buttonIcon = ImageIO.read(new File("../../images/redoHovered.png"));
         redoButton.setRolloverIcon(new ImageIcon(buttonIcon));
         
         name.setSize(120, 20);
@@ -781,7 +781,7 @@ public class ImageLabeller extends JFrame {
 			window.setupGUI();
 			window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		} catch (Exception e) {
-			System.err.println("Image: " + argv[0]);
+			//System.err.println("Image: " + argv[0]);
 			e.printStackTrace();
 		}
 	}

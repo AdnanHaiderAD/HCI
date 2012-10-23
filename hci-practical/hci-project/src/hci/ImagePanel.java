@@ -70,9 +70,7 @@ public class ImagePanel extends JPanel implements MouseListener {
 	public ImagePanel() {
 		polygontable = new Hashtable<String, ArrayList<Point>>();
 		selectedPolygon = new ArrayList<Point>();
-		this.addpoint = true;
-		// polygonsList = new ArrayList<ArrayList<Point>>();
-
+		
 		this.setVisible(true);
 
 		Dimension panelSize = new Dimension(800, 600);
