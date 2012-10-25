@@ -513,7 +513,7 @@ public class ImageLabeller extends JFrame {
         remP.setSelectedIcon(new ImageIcon(buttonIcon));
         remP.setMnemonic(KeyEvent.VK_R);
         
-        buttonIcon = ImageIO.read(new File("../images/undoButton.png"));
+        buttonIcon = ImageIO.read(new File("../images/UndoButton.png"));
         JButton undoButton = new JButton();
         undoButton.setSize(new Dimension(45, 30));
         undoButton.setPreferredSize(new Dimension(45, 30));
@@ -523,11 +523,11 @@ public class ImageLabeller extends JFrame {
         undoButton.setContentAreaFilled(false);
         undoButton.setAction(undo);
         undoButton.setIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/undoHovered.png"));
+        buttonIcon = ImageIO.read(new File("../images/UndoHovered.png"));
         undoButton.setRolloverIcon(new ImageIcon(buttonIcon));
         undoButton.setText("");
         
-        buttonIcon = ImageIO.read(new File("../images/redoButton.png"));
+        buttonIcon = ImageIO.read(new File("../images/RedoButton.png"));
         JButton redoButton = new JButton();
         redoButton.setSize(new Dimension(45, 30));
         redoButton.setPreferredSize(new Dimension(45, 30));
@@ -538,7 +538,7 @@ public class ImageLabeller extends JFrame {
         redoButton.setAction(redo);
         redoButton.setText("");
         redoButton.setIcon(new ImageIcon(buttonIcon));
-        buttonIcon = ImageIO.read(new File("../images/redoHovered.png"));
+        buttonIcon = ImageIO.read(new File("../images/RedoHovered.png"));
         redoButton.setRolloverIcon(new ImageIcon(buttonIcon));
         
         name.setSize(120, 20);
