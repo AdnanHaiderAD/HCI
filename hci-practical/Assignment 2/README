@@ -1,0 +1,13 @@
+The application is packed as a jar for convenience.
+
+To run simply enter the following into a terminal in the directory containing
+the jar and the dependant icons,images and sounds folders.
+
+java -jar hci.jar
+
+The folder "HCI" contains the complete source code if you would like to browse it.
+
+Report.pdf is our report as you would expect.
+
+We submitted an image file because we have a built in tutorial for the system and required a sample image to guide a user.
+
